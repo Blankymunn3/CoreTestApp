@@ -1,5 +1,6 @@
 package io.bitsound.coretestapp.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -288,6 +289,29 @@ public class MainActivity extends AppCompatActivity implements MainView {
     protected void onDestroy() {
         super.onDestroy();
         this.mainPresenter.destroy();
+    }
+
+    @Override
+    public void startPerformanceRecResultActivity(boolean preambleCsSelected,
+                                                  boolean energyDetectorSelected, boolean qokShapingSelected,
+                                                  boolean localSyncFinderSelected, int frameType, int coreType, int noSigThreshold,
+                                                  int combiningThreshold, double rec, double gamma, double unitBufferSize) {
+        
+        Intent intent = new Intent(MainActivity.this, ResultActivity.class);
+
+        intent.putExtra(ResultActivity.EXTRA_PREAMBLE_CS, preambleCsSelected);
+        intent.putExtra(ResultActivity.EXTRA_ENERGY_DETECTOR, energyDetectorSelected);
+        intent.putExtra(ResultActivity.EXTRA_QOK_SHAPING, qokShapingSelected);
+        intent.putExtra(ResultActivity.EXTRA_LOCAL_SYNC_FINDER, localSyncFinderSelected);
+        intent.putExtra(ResultActivity.EXTRA_FRAME_TYPE, frameType);
+        intent.putExtra(ResultActivity.EXTRA_CORE_TYPE, coreType);
+        intent.putExtra(ResultActivity.EXTRA_NO_SIG_THRESHOLD, noSigThreshold);
+        intent.putExtra(ResultActivity.EXTRA_COMBINING_THRESHOLD, combiningThreshold);
+        intent.putExtra(ResultActivity.EXTRA_REC, rec);
+        intent.putExtra(ResultActivity.EXTRA_GAMMA, gamma);
+        intent.putExtra(ResultActivity.EXTRA_UNIT_BUFFER_SIZE, unitBufferSize);
+
+        startActivity(intent);
     }
 }
 

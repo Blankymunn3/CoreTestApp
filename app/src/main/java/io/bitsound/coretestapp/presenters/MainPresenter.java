@@ -12,10 +12,10 @@ public class MainPresenter implements Presenter {
 
     private MainView mainView;
 
-    private boolean preambleCsSelected;
-    private boolean energyDetectorSelected;
-    private boolean qokShapingSelected;
-    private boolean localSyncFinderSelected;
+    private boolean preambleCsSelected = true;
+    private boolean energyDetectorSelected = true;
+    private boolean qokShapingSelected = true;
+    private boolean localSyncFinderSelected = true;
 
     private int frameType;
     private int coreType;
@@ -90,6 +90,7 @@ public class MainPresenter implements Presenter {
     public void setUnitBufferSize(double unitBufferSize) {
         this.unitBufferSize = unitBufferSize;
     }
+
 
     public void startPerformanceRecord() {
         mainView.startPerformanceRecResultActivity(preambleCsSelected, energyDetectorSelected,

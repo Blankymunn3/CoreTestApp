@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="buttonColorPrimary">#00B0FF</color>
     <color name="buttonColorSecondary">#448AFF</color>
+    <color name="result_separator_color">#eeeeee</color>
+    <color name="info_text_background">#bdbdbd</color>
 </resources>
