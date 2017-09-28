@@ -4,4 +4,5 @@
     <string name="main_parameter_energy_detector_text">Energy Detector</string>
     <string name="main_parameter_qok_shaping_text">QOK Shaping</string>
     <string name="main_parameter_local_sync_finder_text">Local Sync Finder</string>
+    <string name="main_frame_type_text">Frame Type</string>
 </resources>

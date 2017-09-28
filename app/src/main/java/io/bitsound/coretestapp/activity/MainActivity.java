@@ -2,8 +2,11 @@ package io.bitsound.coretestapp.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.zcw.togglebutton.ToggleButton;
 
+import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.bitsound.coretestapp.R;
@@ -22,6 +25,11 @@ public class MainActivity extends AppCompatActivity implements MainView {
     public ToggleButton qokShapingToggleButton;
     @BindView(R.id.toggle_local_sync_finder)
     public ToggleButton localSyncFinderToggleButton;
+    @BindView(R.id.frame_type_spinner)
+    public MaterialSpinner frameTypeSpinner;
+
+    @BindArray(R.array.frame_types)
+    public String[] frameTypeString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +73,19 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 mainPresenter.setLocalSyncFinderSelected(on);
             }
         });
+
+        frameTypeSpinner.setItems(frameTypeString);
+
+        frameTypeSpinner.setOnItemSelectedListener(new MaterialSpinner.OnItemSelectedListener<String>() {
+            @Override
+            public void onItemSelected(MaterialSpinner view, int position, long id, String item) {
+                mainPresenter.setFrameType(position);
+            }
+        });
+
     }
+
+
 
     @Override
     protected void onResume() {

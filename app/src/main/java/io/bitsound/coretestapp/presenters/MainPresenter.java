@@ -17,6 +17,8 @@ public class MainPresenter implements Presenter {
     private boolean qokShapingSelected;
     private boolean localSyncFinderSelected;
 
+    private int frameType;
+
     public void setMainView(@NonNull MainView view) {
         this.mainView = view;
     }
@@ -51,6 +53,14 @@ public class MainPresenter implements Presenter {
 
     public void setLocalSyncFinderSelected(boolean localSyncFinderSelected) {
         this.localSyncFinderSelected = localSyncFinderSelected;
+    }
+
+    public int getFrameType() {
+        return frameType;
+    }
+
+    public void setFrameType(int frameType) {
+        this.frameType = frameType;
     }
 
     @Override
