@@ -5,4 +5,5 @@ package io.bitsound.coretestapp.view;
  */
 
 public interface MainView {
+
 }

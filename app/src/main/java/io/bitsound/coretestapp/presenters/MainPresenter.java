@@ -19,6 +19,11 @@ public class MainPresenter implements Presenter {
 
     private int frameType;
     private int coreType;
+    private int noSigThreshold;
+    private int combiningThreshold;
+    private double rec;
+    private double gamma;
+    private double unitBufferSize;
 
     public void setMainView(@NonNull MainView view) {
         this.mainView = view;
@@ -72,6 +77,26 @@ public class MainPresenter implements Presenter {
         this.coreType = coreType;
     }
 
+    public void setCsParam(int noSigThreshold, int combiningThreshold) {
+        this.noSigThreshold = noSigThreshold;
+        this.combiningThreshold = combiningThreshold;
+    }
+
+    public void setDetectParam(double rec, double gamma) {
+        this.rec = rec;
+        this.gamma = gamma;
+    }
+
+    public void setUnitBufferSize(double unitBufferSize) {
+        this.unitBufferSize = unitBufferSize;
+    }
+
+    public void startPerformanceRecord() {
+        mainView.startPerformanceRecResultActivity(preambleCsSelected, energyDetectorSelected,
+                qokShapingSelected, localSyncFinderSelected, frameType, coreType,
+                noSigThreshold, combiningThreshold, rec, gamma, unitBufferSize);
+    }
+
     @Override
     public void resume() {
 
@@ -86,4 +111,5 @@ public class MainPresenter implements Presenter {
     public void destroy() {
 
     }
+
 }

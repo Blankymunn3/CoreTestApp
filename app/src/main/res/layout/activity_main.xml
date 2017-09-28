@@ -1,170 +1,224 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
+    android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="io.bitsound.coretestapp.activity.MainActivity">
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:minHeight="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?attr/colorPrimary"
-        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+        android:minHeight="?attr/actionBarSize"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:orientation="vertical">
+        android:layout_below="@+id/toolbar">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingTop="7dp"
-            android:paddingBottom="7dp"
-            android:paddingRight="7dp"
-            android:paddingLeft="10dp"
-            android:background="@drawable/textline">
-            <TextView
-                android:layout_width="0dp"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/main_preamble_cs_param"
-                android:textSize="18sp"/>
-            <com.zcw.togglebutton.ToggleButton
-                android:id="@+id/toggle_preamble_cs"
-                android:layout_width="54dp"
-                android:layout_height="30dp"
-                app:tbOnColor="#68e99f"
-                app:tbOffColor="#dbdadb"
-                app:tbSpotColor="#ffdddd"
-                app:tbOffBorderColor="#dbdadb"
-                app:tbBorderWidth="1dp"/>
+                android:background="@drawable/textline"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="7dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="7dp"
+                android:paddingTop="7dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/main_preamble_cs_param"
+                    android:textSize="18sp" />
+
+                <com.zcw.togglebutton.ToggleButton
+                    android:id="@+id/toggle_preamble_cs"
+                    android:layout_width="54dp"
+                    android:layout_height="30dp"
+                    app:tbBorderWidth="1dp"
+                    app:tbOffBorderColor="#dbdadb"
+                    app:tbOffColor="#dbdadb"
+                    app:tbOnColor="#68e99f"
+                    app:tbSpotColor="#ffdddd" />
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/textline"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="7dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="7dp"
+                android:paddingTop="7dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/main_parameter_energy_detector_text"
+                    android:textSize="18sp" />
+
+                <com.zcw.togglebutton.ToggleButton
+                    android:id="@+id/toggle_energy_detector"
+                    android:layout_width="54dp"
+                    android:layout_height="30dp"
+                    app:tbBorderWidth="1dp"
+                    app:tbOffBorderColor="#dbdadb"
+                    app:tbOffColor="#dbdadb"
+                    app:tbOnColor="#68e99f"
+                    app:tbSpotColor="#ffdddd" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/textline"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="7dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="7dp"
+                android:paddingTop="7dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/main_parameter_qok_shaping_text"
+                    android:textSize="18sp" />
+
+                <com.zcw.togglebutton.ToggleButton
+                    android:id="@+id/toggle_qok_shaping"
+                    android:layout_width="54dp"
+                    android:layout_height="30dp"
+                    app:tbBorderWidth="1dp"
+                    app:tbOffBorderColor="#dbdadb"
+                    app:tbOffColor="#dbdadb"
+                    app:tbOnColor="#68e99f"
+                    app:tbSpotColor="#ffdddd" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/textline"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingBottom="7dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="7dp"
+                android:paddingTop="7dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/main_parameter_local_sync_finder_text"
+                    android:textSize="18sp" />
+
+                <com.zcw.togglebutton.ToggleButton
+                    android:id="@+id/toggle_local_sync_finder"
+                    android:layout_width="54dp"
+                    android:layout_height="30dp"
+                    app:tbBorderWidth="1dp"
+                    app:tbOffBorderColor="#dbdadb"
+                    app:tbOffColor="#dbdadb"
+                    app:tbOnColor="#68e99f"
+                    app:tbSpotColor="#ffdddd" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/textline"
+                android:orientation="horizontal"
+                android:paddingBottom="1dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="7dp"
+                android:paddingTop="1dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="7dp"
+                    android:text="@string/main_frame_type_text"
+                    android:textSize="18sp" />
+
+                <com.jaredrummler.materialspinner.MaterialSpinner
+                    android:id="@+id/frame_type_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/textline"
+                android:orientation="horizontal">
+
+                <org.honorato.multistatetogglebutton.MultiStateToggleButton
+                    android:id="@+id/core_type_toggle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/textline"
+                    app:mstbPrimaryColor="@color/colorPrimary"
+                    app:mstbSecondaryColor="@android:color/white"
+                    app:values="@array/core_type_array" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="7dp"
+                android:layout_marginTop="5dp">
+                <Button
+                    android:id="@+id/start_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/CorePrimaryButton"
+                    android:text="@string/start_button_text"/>
+                <Button
+                    android:id="@+id/signal_cycle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/CorePrimaryButton"
+                    android:text="@string/result_button_text"/>
+                <Button
+                    android:id="@+id/data_cs_param_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/CoreSecondaryButton"
+                    android:text="@string/data_cs_button_text"/>
+                <Button
+                    android:id="@+id/detect_param_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/CorePrimaryButton"
+                    android:text="@string/detect_param_button_text"/>
+                <Button
+                    android:id="@+id/unit_buffer_param_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:theme="@style/CoreSecondaryButton"
+                    android:text="@string/unit_buffer_param_button_text"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </ScrollView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingTop="7dp"
-        android:paddingBottom="7dp"
-        android:paddingRight="7dp"
-        android:paddingLeft="10dp"
-        android:background="@drawable/textline">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/main_parameter_energy_detector_text"
-            android:textSize="18sp"/>
-        <com.zcw.togglebutton.ToggleButton
-            android:id="@+id/toggle_energy_detector"
-            android:layout_width="54dp"
-            android:layout_height="30dp"
-            app:tbOnColor="#68e99f"
-            app:tbOffColor="#dbdadb"
-            app:tbSpotColor="#ffdddd"
-            app:tbOffBorderColor="#dbdadb"
-            app:tbBorderWidth="1dp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingTop="7dp"
-        android:paddingBottom="7dp"
-        android:paddingRight="7dp"
-        android:paddingLeft="10dp"
-        android:background="@drawable/textline">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/main_parameter_qok_shaping_text"
-            android:textSize="18sp"/>
-        <com.zcw.togglebutton.ToggleButton
-            android:id="@+id/toggle_qok_shaping"
-            android:layout_width="54dp"
-            android:layout_height="30dp"
-            app:tbOnColor="#68e99f"
-            app:tbOffColor="#dbdadb"
-            app:tbSpotColor="#ffdddd"
-            app:tbOffBorderColor="#dbdadb"
-            app:tbBorderWidth="1dp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingTop="7dp"
-        android:paddingBottom="7dp"
-        android:paddingRight="7dp"
-        android:paddingLeft="10dp"
-        android:background="@drawable/textline">
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/main_parameter_local_sync_finder_text"
-            android:textSize="18sp"/>
-        <com.zcw.togglebutton.ToggleButton
-            android:id="@+id/toggle_local_sync_finder"
-            android:layout_width="54dp"
-            android:layout_height="30dp"
-            app:tbOnColor="#68e99f"
-            app:tbOffColor="#dbdadb"
-            app:tbSpotColor="#ffdddd"
-            app:tbOffBorderColor="#dbdadb"
-            app:tbBorderWidth="1dp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="1dp"
-        android:paddingBottom="1dp"
-        android:paddingRight="7dp"
-        android:paddingLeft="10dp"
-        android:background="@drawable/textline">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/main_frame_type_text"
-            android:textSize="18sp"
-            android:paddingRight="7dp"/>
-        <com.jaredrummler.materialspinner.MaterialSpinner
-            android:id="@+id/frame_type_spinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/textline">
-        <org.honorato.multistatetogglebutton.MultiStateToggleButton
-            android:id="@+id/core_type_toggle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/textline"
-            app:values="@array/core_type_array"
-            app:mstbPrimaryColor="@color/colorPrimary"
-            app:mstbSecondaryColor="@android:color/white"/>
-    </LinearLayout>
-
-</LinearLayout>
+</RelativeLayout>

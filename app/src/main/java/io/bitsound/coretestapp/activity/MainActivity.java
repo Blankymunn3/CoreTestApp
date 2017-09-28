@@ -3,6 +3,10 @@ package io.bitsound.coretestapp.activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.zcw.togglebutton.ToggleButton;
@@ -12,9 +16,11 @@ import org.honorato.multistatetogglebutton.MultiStateToggleButton;
 import butterknife.BindArray;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.bitsound.coretestapp.R;
 import io.bitsound.coretestapp.presenters.MainPresenter;
 import io.bitsound.coretestapp.view.MainView;
+import me.drakeet.materialdialog.MaterialDialog;
 
 public class MainActivity extends AppCompatActivity implements MainView {
 
@@ -38,6 +44,11 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @BindArray(R.array.frame_types)
     public String[] frameTypeString;
 
+    private MaterialDialog csParamDialog;
+    private MaterialDialog detectParamDialog;
+    private MaterialDialog unitBufferSizeDialog;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,11 +62,29 @@ public class MainActivity extends AppCompatActivity implements MainView {
         toolbar.setTitle(getString(R.string.app_name));
         setSupportActionBar(toolbar);
 
-        preambleCsToggleButton.setToggleOff(false);
-        energyDetectorToggleButton.setToggleOff(false);
-        qokShapingToggleButton.setToggleOff(false);
-        localSyncFinderToggleButton.setToggleOff(false);
+        if (mainPresenter.isPreambleCsSelected()) {
+            preambleCsToggleButton.toggleOn();
+        } else {
+            preambleCsToggleButton.toggleOff();
+        }
 
+        if (mainPresenter.isEnergyDetectorSelected()) {
+            energyDetectorToggleButton.toggleOn();
+        } else {
+            energyDetectorToggleButton.toggleOff();
+        }
+
+        if (mainPresenter.isQokShapingSelected()) {
+            qokShapingToggleButton.toggleOn();
+        } else {
+            qokShapingToggleButton.toggleOff();
+        }
+
+        if (mainPresenter.isLocalSyncFinderSelected()) {
+            localSyncFinderToggleButton.toggleOn();
+        } else {
+            localSyncFinderToggleButton.toggleOff();
+        }
 
         preambleCsToggleButton.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
             @Override
@@ -104,7 +133,146 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     }
 
-    @Override
+    @OnClick(R.id.start_button)
+    public void onStartButtonClick() {
+        mainPresenter.startPerformanceRecord();
+    }
+
+    @OnClick(R.id.signal_cycle)
+    public void onSignalCycleButtonClick() {
+
+    }
+
+    @OnClick(R.id.data_cs_param_button)
+    public void onDataCsParamButtonClick() {
+        final View root = getLayoutInflater().inflate(R.layout.dialog_cs_param, null);
+        csParamDialog = new MaterialDialog(this)
+                .setView(root)
+                .setPositiveButton(getString(R.string.dialog_ok_text), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EditText noSigThresholdEdittext = (EditText) root.findViewById(R.id.no_sig_threshold_edittext);
+                        EditText combiningThresholdEdittext = (EditText) root.findViewById(R.id.combining_threshold_edittext);
+
+                        String noSigStr = noSigThresholdEdittext.getText().toString();
+                        String combiningStr = combiningThresholdEdittext.getText().toString();
+
+                        int noSigThreshold;
+                        int combiningThreshold;
+
+                        if (!TextUtils.isEmpty(noSigStr)) {
+                            noSigThreshold = Integer.parseInt(noSigStr);
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.no_sig_required_msg), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if (!TextUtils.isEmpty(combiningStr)) {
+                            combiningThreshold = Integer.parseInt(combiningStr);
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.combining_required_msg), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        mainPresenter.setCsParam(noSigThreshold, combiningThreshold);
+
+                        csParamDialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getString(R.string.dialog_cancel_text), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        csParamDialog.dismiss();
+                    }
+                });
+
+        csParamDialog.show();
+    }
+
+    @OnClick(R.id.detect_param_button)
+    public void onDetectParamButtonClick() {
+        final View root = getLayoutInflater().inflate(R.layout.dialog_detect_param, null);
+        detectParamDialog = new MaterialDialog(this)
+                .setView(root)
+                .setPositiveButton(getString(R.string.dialog_ok_text), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EditText recEdittext = (EditText) root.findViewById(R.id.rec_edittext);
+                        EditText gammaEdittext = (EditText) root.findViewById(R.id.gamma_edittext);
+
+                        String recStr = recEdittext.getText().toString();
+                        String gammaStr = gammaEdittext.getText().toString();
+
+                        double rec;
+                        double gamma;
+
+                        if (!TextUtils.isEmpty(recStr)) {
+                            rec = Double.parseDouble(recStr);
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.rec_required_msg), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if (!TextUtils.isEmpty(gammaStr)) {
+                            gamma = Double.parseDouble(gammaStr);
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.gamma_required_msg), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        mainPresenter.setDetectParam(rec, gamma);
+
+                        detectParamDialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getString(R.string.dialog_cancel_text), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        detectParamDialog.dismiss();
+                    }
+                });
+
+        detectParamDialog.show();
+    }
+
+    @OnClick(R.id.unit_buffer_param_button)
+    public void onUnitBufferParamButtonClick() {
+        final View root = getLayoutInflater().inflate(R.layout.dialog_unit_buffer_size, null);
+        unitBufferSizeDialog = new MaterialDialog(this)
+                .setView(root)
+                .setPositiveButton(getString(R.string.dialog_ok_text), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EditText unitBufferSizeEdittext = (EditText) root.findViewById(R.id.unit_buffer_size_edittext);
+
+                        String unitBufferSizeStr = unitBufferSizeEdittext.getText().toString();
+
+                        double unitBufferSize;
+
+                        if (!TextUtils.isEmpty(unitBufferSizeStr)) {
+                            unitBufferSize = Integer.parseInt(unitBufferSizeStr);
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.unit_buffer_size_required_msg), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        mainPresenter.setUnitBufferSize(unitBufferSize);
+
+                        detectParamDialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getString(R.string.dialog_cancel_text), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        detectParamDialog.dismiss();
+                    }
+                });
+
+        detectParamDialog.show();
+    }
+
+
+        @Override
     protected void onResume() {
         super.onResume();
         this.mainPresenter.resume();

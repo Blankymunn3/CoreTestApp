@@ -41,4 +41,7 @@ dependencies {
     //Multi State Toggle Button
     implementation 'org.honorato.multistatetogglebutton:multistatetogglebutton:0.2.2'
 
+
+    implementation 'me.drakeet.materialdialog:library:1.3.1'
+
 }
