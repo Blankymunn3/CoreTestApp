@@ -296,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
                                                   boolean energyDetectorSelected, boolean qokShapingSelected,
                                                   boolean localSyncFinderSelected, int frameType, int coreType, int noSigThreshold,
                                                   int combiningThreshold, double rec, double gamma, double unitBufferSize) {
-        
+
         Intent intent = new Intent(MainActivity.this, ResultActivity.class);
 
         intent.putExtra(ResultActivity.EXTRA_PREAMBLE_CS, preambleCsSelected);
