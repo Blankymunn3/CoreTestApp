@@ -4,7 +4,7 @@ android {
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
     defaultConfig {
-        applicationId "io.bitsound.coretestapp"
+        applicationId "io.bitsound.coretestapp.activity"
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
@@ -31,5 +31,8 @@ dependencies {
     //Butter Knife
     compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    //toggle button
+    compile 'com.zcw:togglebutton-library:1.0.0'
 
 }

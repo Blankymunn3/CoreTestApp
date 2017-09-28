@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">CoreTestApp</string>
+    <string name="main_preamble_cs_param">Preamble CS</string>
+    <string name="main_parameter_energy_detector_text">Energy Detector</string>
+    <string name="main_parameter_qok_shaping_text">QOK Shaping</string>
+    <string name="main_parameter_local_sync_finder_text">Local Sync Finder</string>
 </resources>
