@@ -6,4 +6,10 @@
         <item>FrameTypeThree</item>
         <item>FrameTypeFour</item>
     </string-array>
+
+    <string-array name="core_type_array">
+        <item>FullPkt</item>
+        <item>Parallel</item>
+    </string-array>
+
 </resources>

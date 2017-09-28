@@ -18,6 +18,7 @@ public class MainPresenter implements Presenter {
     private boolean localSyncFinderSelected;
 
     private int frameType;
+    private int coreType;
 
     public void setMainView(@NonNull MainView view) {
         this.mainView = view;
@@ -61,6 +62,14 @@ public class MainPresenter implements Presenter {
 
     public void setFrameType(int frameType) {
         this.frameType = frameType;
+    }
+
+    public int getCoreType() {
+        return coreType;
+    }
+
+    public void setCoreType(int coreType) {
+        this.coreType = coreType;
     }
 
     @Override

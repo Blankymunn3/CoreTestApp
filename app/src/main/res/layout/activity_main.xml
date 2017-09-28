@@ -8,13 +8,20 @@
     android:layout_height="match_parent"
     tools:context="io.bitsound.coretestapp.activity.MainActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:minHeight="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:orientation="vertical">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,14 +32,12 @@
             android:paddingRight="7dp"
             android:paddingLeft="10dp"
             android:background="@drawable/textline">
-
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/main_preamble_cs_param"
                 android:textSize="18sp"/>
-
             <com.zcw.togglebutton.ToggleButton
                 android:id="@+id/toggle_preamble_cs"
                 android:layout_width="54dp"
@@ -41,10 +46,8 @@
                 app:tbOffColor="#dbdadb"
                 app:tbSpotColor="#ffdddd"
                 app:tbOffBorderColor="#dbdadb"
-                app:tbAsDefaultOn="true"
                 app:tbBorderWidth="1dp"/>
         </LinearLayout>
-
     </LinearLayout>
 
     <LinearLayout
@@ -63,7 +66,6 @@
             android:layout_weight="1"
             android:text="@string/main_parameter_energy_detector_text"
             android:textSize="18sp"/>
-
         <com.zcw.togglebutton.ToggleButton
             android:id="@+id/toggle_energy_detector"
             android:layout_width="54dp"
@@ -72,7 +74,6 @@
             app:tbOffColor="#dbdadb"
             app:tbSpotColor="#ffdddd"
             app:tbOffBorderColor="#dbdadb"
-            app:tbAsDefaultOn="true"
             app:tbBorderWidth="1dp"/>
     </LinearLayout>
 
@@ -92,7 +93,6 @@
             android:layout_weight="1"
             android:text="@string/main_parameter_qok_shaping_text"
             android:textSize="18sp"/>
-
         <com.zcw.togglebutton.ToggleButton
             android:id="@+id/toggle_qok_shaping"
             android:layout_width="54dp"
@@ -101,7 +101,6 @@
             app:tbOffColor="#dbdadb"
             app:tbSpotColor="#ffdddd"
             app:tbOffBorderColor="#dbdadb"
-            app:tbAsDefaultOn="true"
             app:tbBorderWidth="1dp"/>
     </LinearLayout>
 
@@ -121,7 +120,6 @@
             android:layout_weight="1"
             android:text="@string/main_parameter_local_sync_finder_text"
             android:textSize="18sp"/>
-
         <com.zcw.togglebutton.ToggleButton
             android:id="@+id/toggle_local_sync_finder"
             android:layout_width="54dp"
@@ -130,10 +128,8 @@
             app:tbOffColor="#dbdadb"
             app:tbSpotColor="#ffdddd"
             app:tbOffBorderColor="#dbdadb"
-            app:tbAsDefaultOn="true"
             app:tbBorderWidth="1dp"/>
     </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -154,6 +150,21 @@
             android:id="@+id/frame_type_spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/textline">
+        <org.honorato.multistatetogglebutton.MultiStateToggleButton
+            android:id="@+id/core_type_toggle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/textline"
+            app:values="@array/core_type_array"
+            app:mstbPrimaryColor="@color/colorPrimary"
+            app:mstbSecondaryColor="@android:color/white"/>
     </LinearLayout>
 
 </LinearLayout>

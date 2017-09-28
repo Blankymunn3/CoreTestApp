@@ -2,9 +2,12 @@ package io.bitsound.coretestapp.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 
 import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.zcw.togglebutton.ToggleButton;
+
+import org.honorato.multistatetogglebutton.MultiStateToggleButton;
 
 import butterknife.BindArray;
 import butterknife.BindView;
@@ -17,6 +20,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     private MainPresenter mainPresenter;
 
+    @BindView(R.id.toolbar)
+    public Toolbar toolbar;
     @BindView(R.id.toggle_preamble_cs)
     public ToggleButton preambleCsToggleButton;
     @BindView(R.id.toggle_energy_detector)
@@ -27,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
     public ToggleButton localSyncFinderToggleButton;
     @BindView(R.id.frame_type_spinner)
     public MaterialSpinner frameTypeSpinner;
+    @BindView(R.id.core_type_toggle)
+    public MultiStateToggleButton coreTypeToggle;
 
     @BindArray(R.array.frame_types)
     public String[] frameTypeString;
@@ -41,10 +48,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
         this.mainPresenter = new MainPresenter();
         this.mainPresenter.setMainView(this);
 
+        toolbar.setTitle(getString(R.string.app_name));
+        setSupportActionBar(toolbar);
+
         preambleCsToggleButton.setToggleOff(false);
         energyDetectorToggleButton.setToggleOff(false);
         qokShapingToggleButton.setToggleOff(false);
         localSyncFinderToggleButton.setToggleOff(false);
+
 
         preambleCsToggleButton.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
             @Override
@@ -83,9 +94,15 @@ public class MainActivity extends AppCompatActivity implements MainView {
             }
         });
 
+        coreTypeToggle.setStates(new boolean[]{true, false});
+        coreTypeToggle.setOnValueChangedListener(new MultiStateToggleButton.OnValueChangedListener() {
+            @Override
+            public void onValueChanged(int position) {
+                mainPresenter.setCoreType(position);
+            }
+        });
+
     }
-
-
 
     @Override
     protected void onResume() {

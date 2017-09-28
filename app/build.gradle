@@ -38,4 +38,7 @@ dependencies {
     //Material Spinner
     implementation 'com.jaredrummler:material-spinner:1.1.0'
 
+    //Multi State Toggle Button
+    implementation 'org.honorato.multistatetogglebutton:multistatetogglebutton:0.2.2'
+
 }
