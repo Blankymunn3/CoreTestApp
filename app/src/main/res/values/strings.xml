@@ -54,4 +54,11 @@
     <string name="menu_play">Play</string>
     <string name="menu_pause">Pause</string>
     <string name="menu_reset">Reset</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_mic">Request Mic Perm</string>
+    <string name="mic_permission_denied">마이크 권한 불허가</string>
+    <string name="mic_permission_allowed">마이크 권한 허가</string>
+    <string name="dialog_rec_count_title_text">테스트 횟수 입력(0은 중지시까지)</string>
+    <string name="rec_count_hint_text">테스트 횟수</string>
+    <string name="mic_count_required_msg">시도 횟수를 입력하세요(0은 정지시까지 반복)</string>
 </resources>

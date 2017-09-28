@@ -1,10 +1,17 @@
 package io.bitsound.coretestapp.activity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -13,6 +20,9 @@ import com.jaredrummler.materialspinner.MaterialSpinner;
 import com.zcw.togglebutton.ToggleButton;
 
 import org.honorato.multistatetogglebutton.MultiStateToggleButton;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindArray;
 import butterknife.BindView;
@@ -24,6 +34,8 @@ import io.bitsound.coretestapp.view.MainView;
 import me.drakeet.materialdialog.MaterialDialog;
 
 public class MainActivity extends AppCompatActivity implements MainView {
+
+    private final int CODE_REQUEST_RECORD_AUDIO = 3;
 
     private MainPresenter mainPresenter;
 
@@ -48,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     private MaterialDialog csParamDialog;
     private MaterialDialog detectParamDialog;
     private MaterialDialog unitBufferSizeDialog;
+    private MaterialDialog recCountDialog;
 
 
     @Override
@@ -124,7 +137,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
             }
         });
 
-        coreTypeToggle.setStates(new boolean[]{true, false});
+        if (mainPresenter.getCoreType() == 0) {
+            // pullpkt
+            coreTypeToggle.setStates(new boolean[]{true, false});
+        } else {
+            // parallel
+            coreTypeToggle.setStates(new boolean[]{false, true});
+        }
+
         coreTypeToggle.setOnValueChangedListener(new MultiStateToggleButton.OnValueChangedListener() {
             @Override
             public void onValueChanged(int position) {
@@ -141,7 +161,50 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @OnClick(R.id.signal_cycle)
     public void onSignalCycleButtonClick() {
+        final View root = getLayoutInflater().inflate(R.layout.dialog_cs_param, null);
+        csParamDialog = new MaterialDialog(this)
+                .setView(root)
+                .setPositiveButton(getString(R.string.dialog_ok_text), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EditText noSigThresholdEdittext = (EditText) root.findViewById(R.id.no_sig_threshold_edittext);
+                        EditText combiningThresholdEdittext = (EditText) root.findViewById(R.id.combining_threshold_edittext);
 
+                        String noSigStr = noSigThresholdEdittext.getText().toString();
+                        String combiningStr = combiningThresholdEdittext.getText().toString();
+
+                        int noSigThreshold;
+                        int combiningThreshold;
+
+                        if (!TextUtils.isEmpty(noSigStr)) {
+                            noSigThreshold = Integer.parseInt(noSigStr);
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.no_sig_required_msg),
+                                    Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        if (!TextUtils.isEmpty(combiningStr)) {
+                            combiningThreshold = Integer.parseInt(combiningStr);
+                        } else {
+                            Toast.makeText(MainActivity.this, getString(R.string.combining_required_msg),
+                                    Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        mainPresenter.setCsParam(noSigThreshold, combiningThreshold);
+
+                        csParamDialog.dismiss();
+                    }
+                })
+                .setNegativeButton(getString(R.string.dialog_cancel_text), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        csParamDialog.dismiss();
+                    }
+                });
+
+        csParamDialog.show();
     }
 
     @OnClick(R.id.data_cs_param_button)
@@ -164,7 +227,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
                         if (!TextUtils.isEmpty(noSigStr)) {
                             noSigThreshold = Integer.parseInt(noSigStr);
                         } else {
-                            Toast.makeText(MainActivity.this, getString(R.string.no_sig_required_msg), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, getString(R.string.rec_required_msg),
+                                    Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -210,14 +274,16 @@ public class MainActivity extends AppCompatActivity implements MainView {
                         if (!TextUtils.isEmpty(recStr)) {
                             rec = Double.parseDouble(recStr);
                         } else {
-                            Toast.makeText(MainActivity.this, getString(R.string.rec_required_msg), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, getString(R.string.rec_required_msg),
+                                    Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         if (!TextUtils.isEmpty(gammaStr)) {
                             gamma = Double.parseDouble(gammaStr);
                         } else {
-                            Toast.makeText(MainActivity.this, getString(R.string.gamma_required_msg), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, getString(R.string.gamma_required_msg),
+                                    Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -253,27 +319,45 @@ public class MainActivity extends AppCompatActivity implements MainView {
                         if (!TextUtils.isEmpty(unitBufferSizeStr)) {
                             unitBufferSize = Integer.parseInt(unitBufferSizeStr);
                         } else {
-                            Toast.makeText(MainActivity.this, getString(R.string.unit_buffer_size_required_msg), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, getString(R.string.unit_buffer_size_required_msg),
+                                    Toast.LENGTH_SHORT).show();
                             return;
                         }
 
                         mainPresenter.setUnitBufferSize(unitBufferSize);
 
-                        detectParamDialog.dismiss();
+                        unitBufferSizeDialog.dismiss();
                     }
                 })
                 .setNegativeButton(getString(R.string.dialog_cancel_text), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        detectParamDialog.dismiss();
+                        unitBufferSizeDialog.dismiss();
                     }
                 });
 
-        detectParamDialog.show();
+        unitBufferSizeDialog.dismiss();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
 
-        @Override
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle presses on the action bar items
+        switch (item.getItemId()) {
+            case R.id.menu_mic:
+                checkPermission();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         this.mainPresenter.resume();
@@ -291,11 +375,48 @@ public class MainActivity extends AppCompatActivity implements MainView {
         this.mainPresenter.destroy();
     }
 
+    private void checkPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            List<String> permReqList = new ArrayList<>();
+            if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                permReqList.add(Manifest.permission.RECORD_AUDIO);
+            }
+
+            if (permReqList.size() > 0) {
+                String[] permArray = new String[permReqList.size()];
+                ActivityCompat.requestPermissions(MainActivity.this,
+                        permReqList.toArray(permArray), CODE_REQUEST_RECORD_AUDIO);
+            }
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        boolean isRecPerm = false;
+
+        for (String perm : permissions) {
+            if (Manifest.permission.RECORD_AUDIO.equals(perm)
+                    && PackageManager.PERMISSION_GRANTED == grantResults[0]) {
+                isRecPerm = true;
+            }
+        }
+
+        if (!isRecPerm) {
+            Toast.makeText(MainActivity.this, getString(R.string.mic_permission_denied),
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, getString(R.string.mic_permission_allowed),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
     @Override
     public void startPerformanceRecResultActivity(boolean preambleCsSelected,
                                                   boolean energyDetectorSelected, boolean qokShapingSelected,
                                                   boolean localSyncFinderSelected, int frameType, int coreType, int noSigThreshold,
-                                                  int combiningThreshold, double rec, double gamma, double unitBufferSize) {
+                                                  int combiningThreshold, double rec, double gamma, double unitBufferSize, int recCount) {
 
         Intent intent = new Intent(MainActivity.this, ResultActivity.class);
 
@@ -310,6 +431,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         intent.putExtra(ResultActivity.EXTRA_REC, rec);
         intent.putExtra(ResultActivity.EXTRA_GAMMA, gamma);
         intent.putExtra(ResultActivity.EXTRA_UNIT_BUFFER_SIZE, unitBufferSize);
+        intent.putExtra(ResultActivity.EXTRA_REC_COUNT, recCount);
 
         startActivity(intent);
     }
