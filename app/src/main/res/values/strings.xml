@@ -34,6 +34,7 @@
     <string name="data_cs_par_ratio_text">DataCS ParRatio(Par) :</string>
     <string name="no_energy_text">NoEnergy :</string>
     <string name="no_sig_text">NoSig :</string>
+    <string name="find_sig_text">FindSig</string>
     <string name="find_energy_text">FindEnergy :</string>
     <string name="good_sig_text">GoodSig :</string>
     <string name="curr_t_text">Curr. T(y) :</string>
@@ -61,4 +62,6 @@
     <string name="mic_count_required_msg">시도 횟수를 입력하세요(0은 정지시까지 반복)</string>
     <string name="failed_core_init">코어 초기화에 실패하였습니다</string>
     <string name="decoding_result_text">DecodingResult :</string>
+    <string name="write_external_storage_permission_denied">파일 쓰기 권한 불허가</string>
+    <string name="write_external_storage_permission_allowed">파일 쓰기 권한 허가</string>
 </resources>

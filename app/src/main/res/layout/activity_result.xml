@@ -240,11 +240,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:text="@string/good_sig_text"
+                        android:text="@string/find_sig_text"
                         android:textColor="@android:color/black"
                         android:layout_marginRight="5dp"/>
                     <TextView
-                        android:id="@+id/good_sig_textview"
+                        android:id="@+id/find_sig_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
@@ -282,11 +282,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:text="@string/ambig_sig_text"
+                        android:text="@string/good_sig_text"
                         android:textColor="@android:color/black"
                         android:layout_marginRight="5dp"/>
                     <TextView
-                        android:id="@+id/ambig_sig_textview"
+                        android:id="@+id/good_sig_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
@@ -324,11 +324,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:text="@string/crc_err_text"
+                        android:text="@string/ambig_sig_text"
                         android:textColor="@android:color/black"
                         android:layout_marginRight="5dp"/>
                     <TextView
-                        android:id="@+id/crc_err_textview"
+                        android:id="@+id/ambig_sig_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
@@ -366,11 +366,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:text="@string/success_text"
+                        android:text="@string/crc_err_text"
                         android:textColor="@android:color/black"
                         android:layout_marginRight="5dp"/>
                     <TextView
-                        android:id="@+id/success_textview"
+                        android:id="@+id/crc_err_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
@@ -408,11 +408,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
-                        android:text="@string/post_cs_per_text"
+                        android:text="@string/success_text"
                         android:textColor="@android:color/black"
                         android:layout_marginRight="5dp"/>
                     <TextView
-                        android:id="@+id/post_cs_per_textview"
+                        android:id="@+id/success_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="12sp"
@@ -428,6 +428,19 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:text="@string/post_cs_per_text"
+                        android:textColor="@android:color/black"
+                        android:layout_marginRight="5dp"/>
+                    <TextView
+                        android:id="@+id/post_cs_per_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/black"/>
                 </LinearLayout>
                 <LinearLayout
                     android:layout_width="0dp"

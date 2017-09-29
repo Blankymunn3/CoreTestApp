@@ -371,6 +371,10 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 permReqList.add(Manifest.permission.RECORD_AUDIO);
             }
 
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                permReqList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            }
+
             if (permReqList.size() > 0) {
                 String[] permArray = new String[permReqList.size()];
                 ActivityCompat.requestPermissions(MainActivity.this,
@@ -383,11 +387,16 @@ public class MainActivity extends AppCompatActivity implements MainView {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
         boolean isRecPerm = false;
+        boolean isWritePerm = false;
 
         for (String perm : permissions) {
             if (Manifest.permission.RECORD_AUDIO.equals(perm)
                     && PackageManager.PERMISSION_GRANTED == grantResults[0]) {
                 isRecPerm = true;
+            }
+            if (Manifest.permission.WRITE_EXTERNAL_STORAGE.equals(perm)
+                    && PackageManager.PERMISSION_GRANTED == grantResults[0]) {
+                isWritePerm = true;
             }
         }
 
@@ -396,6 +405,14 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(MainActivity.this, getString(R.string.mic_permission_allowed),
+                    Toast.LENGTH_SHORT).show();
+        }
+
+        if (!isWritePerm) {
+            Toast.makeText(MainActivity.this, getString(R.string.write_external_storage_permission_denied),
+                    Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(MainActivity.this, getString(R.string.write_external_storage_permission_allowed),
                     Toast.LENGTH_SHORT).show();
         }
     }

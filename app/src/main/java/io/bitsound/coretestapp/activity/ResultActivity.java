@@ -53,7 +53,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     public static final String EXTRA_UNIT_BUFFER_SIZE = "extra_unit_buffer_size";
     public static final String EXTRA_REC_COUNT = "extra_rec_count";
 
-    private DecimalFormat dataFormat = new DecimalFormat("#.00");
+    private DecimalFormat dataFormat = new DecimalFormat("###.##");
 
     private ResultPresenter resultPresenter;
     private ResultAdapter resultAdapter;
@@ -90,6 +90,8 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     public TextView findEnergyText;
     @BindView(R.id.good_sig_textview)
     public TextView goodSignalText;
+    @BindView(R.id.find_sig_textview)
+    public TextView findSignalText;
     @BindView(R.id.ambig_sig_textview)
     public TextView ambiSignalText;
     @BindView(R.id.crc_err_textview)
@@ -192,8 +194,10 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                 supportFinishAfterTransition();
                 return true;
             case R.id.menu_play:
+                resultPresenter.startSoundllySDK();
                 return true;
             case R.id.menu_stop:
+                resultPresenter.stopSoundllySdk();
                 return true;
             case R.id.menu_reset:
                 return true;
@@ -250,7 +254,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         // post rec decT(avr)
         postRecDecTText.setText("0(0,0) ms");
         // preCS MAR
-        preCsMarText.setText(String.valueOf(resultPresenter.getAvgPreCsMar()));
+        preCsMarText.setText(String.format("%.3f", resultPresenter.getAvgPreCsMar()));
         // gamma
         gammaText.setText(String.valueOf(resultPresenter.getGamma()));
         int[] symbolDataCsParRatioHistogram = resultPresenter.getSymbolDataCsParRatioHistogram();
@@ -285,6 +289,8 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         noSignalText.setText(String.valueOf(resultPresenter.getTotNoSig()));
         // good signal
         goodSignalText.setText(String.valueOf(resultPresenter.getTotGoodSig()));
+        // find signal
+        findSignalText.setText(String.valueOf(resultPresenter.getTotFindSig()));
         // ambiguous signal
         ambiSignalText.setText(String.valueOf(resultPresenter.getTotAmbiSig()));
         // crc error

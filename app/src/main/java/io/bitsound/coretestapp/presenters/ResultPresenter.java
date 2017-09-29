@@ -2,6 +2,7 @@ package io.bitsound.coretestapp.presenters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -10,10 +11,13 @@ import com.soundlly.standalone.sdk.Soundlly;
 import com.soundlly.standalone.sdk.SoundllyResult;
 import com.soundlly.standalone.sdk.SoundllyResultListener;
 
+import java.io.IOException;
 import java.util.List;
 
 import io.bitsound.coretestapp.activity.ResultActivity;
 import io.bitsound.coretestapp.models.ResultModel;
+import io.bitsound.coretestapp.persistent.Archive;
+import io.bitsound.coretestapp.persistent.FileArchive;
 import io.bitsound.coretestapp.view.ResultView;
 
 /**
@@ -23,6 +27,10 @@ import io.bitsound.coretestapp.view.ResultView;
 public class ResultPresenter implements Presenter {
     private static final String TAG = ResultPresenter.class.getSimpleName();
     private static final String SOUNDLLY_APP_KEY = "54bda562-0a9205df-da905901-YDAJ1861";
+
+    private static final int ARCHIVE_COUNT = 5;
+
+    private Archive corePerfTestArchive;
 
     private Context context;
     private ResultView resultView;
@@ -50,9 +58,6 @@ public class ResultPresenter implements Presenter {
     private double noSigThres;
     private double combiningThres;
 
-    private volatile boolean isRunning;
-
-
     // statistics
     /** 현재 테스트 진행 횟수 **/
     private int testCount = 0;
@@ -69,6 +74,17 @@ public class ResultPresenter implements Presenter {
     private int totSuccess;
     private double totCurrT;
     private double lastCurrT;
+
+    private volatile boolean isRunning;
+
+    public ResultPresenter() {
+        try {
+            corePerfTestArchive = new FileArchive();
+        } catch (IOException e) {
+            e.printStackTrace();
+            corePerfTestArchive = null;
+        }
+    }
 
     public void setContext(@NonNull Context context) {
         this.context = context;
@@ -96,7 +112,7 @@ public class ResultPresenter implements Presenter {
             @Override
             public void onStateChanged(int i) {
                 if (i == SoundllyResultListener.STOPPED) {
-                    if (totRecTryCount <= 0 || testCount < totRecTryCount) {
+                    if (isRunning && (totRecTryCount <= 0 || testCount < totRecTryCount)) {
                         Soundlly.startDetect(false);
                     }
                 }
@@ -230,6 +246,10 @@ public class ResultPresenter implements Presenter {
         return totNoSig;
     }
 
+    public int getTotFindSig() {
+        return totFindSig;
+    }
+
     public int getTotGoodSig() {
         return totGoodSig;
     }
@@ -251,11 +271,11 @@ public class ResultPresenter implements Presenter {
     }
 
     public double getAvgCurrT() {
-        return this.totCurrT / (double) totRecTryCount;
+        return this.totCurrT / (double) testCount;
     }
 
     public double getAvgProcTime() {
-        return this.totProcTime / (double) totRecTryCount;
+        return this.totProcTime / (double) (testCount - totNoEnergy);
     }
 
     public int getUnitBufferSize() {
@@ -357,6 +377,10 @@ public class ResultPresenter implements Presenter {
         Soundlly.startDetect(false);
     }
 
+    public void stopSoundllySdk() {
+        this.isRunning = false;
+    }
+
     public void addProcTime(double procTime) {
         totProcTime += procTime;
         lastProcTime += procTime;
@@ -421,6 +445,14 @@ public class ResultPresenter implements Presenter {
             resultView.refreshRecyclerView();
             resultView.refreshData();
 
+            if (testCount % ARCHIVE_COUNT == 0) {
+                FileArchiveTask task = new FileArchiveTask(corePerfTestArchive, testCount,
+                        preambleCsThres, noSigThres, combiningThres, getAvgPreCsMar(), gamma,
+                        symbolDataCsParRatioHistogram, symbolDataCsParHistogram, totNoEnergy,
+                        totFindEnergy, totProcTime, lastProcTime, totNoSig, totFindSig, totGoodSig,
+                        totAmbiSig, totCrcErr, totSuccess, totCurrT, lastCurrT);
+                task.execute();
+            }
             lastProcTime = 0;
         }
     }
@@ -438,5 +470,75 @@ public class ResultPresenter implements Presenter {
     @Override
     public void destroy() {
         Soundlly.release();
+    }
+    private static class FileArchiveTask extends AsyncTask<Void, Void, Void> {
+
+        private Archive archive;
+        private final int totReceived;
+        private final double preambleCsThres;
+        private final double noSigThres;
+        private final double combiningThres;
+        private final double avgPreCsMar;
+        private final double gamma;
+        private final int[] symbolDataCsParRatioHistogram;
+        private final int[] symbolDataCsParHistogram;
+        private final int totNoEnergy;
+        private final int totFindEnergy;
+        private final double totProcTime;
+        private final double lastProcTime;
+        private final int totNoSig;
+        private final int totFindSig;
+        private final int totGoodSig;
+        private final int totAmbiSig;
+        private final int totCrcErr;
+        private final int totSuccess;
+        private final double totCurrT;
+        private final double lastCurrT;
+
+        public FileArchiveTask(Archive archive, int totReceived, double preambleCsThres, double noSigThres,
+                               double combiningThres, double avgPreCsMar, double gamma, int[] symbolDataCsParRatioHistogram,
+                               int[] symbolDataCsParHistogram, int totNoEnergy, int totFindEnergy, double totProcTime,
+                               double lastProcTime, int totNoSig, int totFindSig, int totGoodSig, int totAmbiSig,
+                               int totCrcErr, int totSuccess, double totCurrT, double lastCurrT) {
+            this.archive = archive;
+            this.totReceived = totReceived;
+            this.preambleCsThres = preambleCsThres;
+            this.noSigThres = noSigThres;
+            this.combiningThres = combiningThres;
+            this.avgPreCsMar = avgPreCsMar;
+            this.gamma = gamma;
+            this.symbolDataCsParRatioHistogram = symbolDataCsParRatioHistogram;
+            this.symbolDataCsParHistogram = symbolDataCsParHistogram;
+            this.totNoEnergy = totNoEnergy;
+            this.totFindEnergy = totFindEnergy;
+            this.totProcTime = totProcTime;
+            this.lastProcTime = lastProcTime;
+            this.totNoSig = totNoSig;
+            this.totFindSig = totFindSig;
+            this.totGoodSig = totGoodSig;
+            this.totAmbiSig = totAmbiSig;
+            this.totCrcErr = totCrcErr;
+            this.totSuccess = totSuccess;
+            this.totCurrT = totCurrT;
+            this.lastCurrT = lastCurrT;
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            if (archive != null) {
+                try {
+                    archive.saveCoreStatistics(totReceived, preambleCsThres, noSigThres,
+                            combiningThres, avgPreCsMar, gamma, symbolDataCsParRatioHistogram,
+                            symbolDataCsParHistogram, totNoEnergy, totFindEnergy, totProcTime,
+                            lastProcTime, totNoSig, totFindSig, totGoodSig, totAmbiSig,
+                            totCrcErr, totSuccess, totCurrT, lastCurrT);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            return null;
+        }
     }
 }
