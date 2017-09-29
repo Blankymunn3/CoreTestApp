@@ -79,9 +79,6 @@ public class ResultPresenter implements Presenter {
     private long[] totReceivedTimeHistogram = new long[SDK_RETRY_COUNT];
     private int[] tryCountHistogram = new int[SDK_RETRY_COUNT];
 
-    private long totReceivedTime;
-    private int totTryCount;
-
     private volatile boolean isRunning;
 
     public ResultPresenter() {
@@ -388,14 +385,6 @@ public class ResultPresenter implements Presenter {
         return tryCountHistogram;
     }
 
-    public long getTotReceivedTime() {
-        return totReceivedTime;
-    }
-
-    public int getTotTryCount() {
-        return totTryCount;
-    }
-
     public void startSoundllySDK() {
         this.isRunning = true;
         Soundlly.startDetect(false);
@@ -433,17 +422,13 @@ public class ResultPresenter implements Presenter {
 
             if (code >= 0 && totRecTime > 0) {
                 // tryCnt는 0,1,2,3 이렇게 옴
-                // startListening 에서 디코딩 끝난 시간까지 통계
-                totReceivedTime += totRecTime;
-                // 총 시도 횟수 누적
-                totTryCount += (tryCnt + 1);
 
                 // 해당 재시작 횟수에 디코딩 시간 누적
                 totReceivedTimeHistogram[tryCnt] += totRecTime;
                 // 해당 재시작 횟수 누적
                 tryCountHistogram[tryCnt]++;
             }
-            
+
             // 에너지 유무
             if (isEnergyDetect) {
                 totFindEnergy++;

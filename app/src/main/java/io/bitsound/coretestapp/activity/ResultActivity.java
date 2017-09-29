@@ -315,13 +315,6 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         // no cs per
         noCsPerText.setText(dataFormat.format(resultPresenter.getNoCsPer()) + " %");
 
-        if (resultPresenter.getTotTryCount() == 0) {
-            avgTotDecodingTimeText.setText("0");
-        } else {
-            double totRecTime = (double) resultPresenter.getTotReceivedTime() / (double) resultPresenter.getTotTryCount();
-            avgTotDecodingTimeText.setText(dataFormat.format(totRecTime));
-        }
-
         long[] totReceivedTimeHistogram = resultPresenter.getTotReceivedTimeHistogram();
         int[] tryCountHistogram = resultPresenter.getTryCountHistogram();
 
@@ -329,14 +322,32 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
 
         sb.append("avg TotDecodingTimeHistogram : ");
 
+        double totDecodingTime = 0;
+        int totTryCnt = 0;
+
         for (int i = 0; i < totReceivedTimeHistogram.length; i++) {
             if (tryCountHistogram[i] == 0) {
                 sb.append("0, ");
             } else {
                 double recTime = (double) totReceivedTimeHistogram[i] / (double) tryCountHistogram[i];
                 sb.append(dataFormat.format(recTime))
+                        .append("(")
+                        .append(tryCountHistogram[i])
+                        .append(")")
                         .append(", ");
+
+                totTryCnt += tryCountHistogram[i];
+                double tmp = recTime * (double) tryCountHistogram[i];
+
+                totDecodingTime += tmp;
             }
+        }
+
+        if (totDecodingTime == 0) {
+            avgTotDecodingTimeText.setText("0");
+        } else {
+            double avg = (double) totDecodingTime / (double) totTryCnt;
+            avgTotDecodingTimeText.setText(dataFormat.format(avg) + "(" + totTryCnt + ")");
         }
 
         sb.deleteCharAt(sb.length() - 2);
