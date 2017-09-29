@@ -1,13 +1,16 @@
 package io.bitsound.coretestapp.activity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -15,17 +18,22 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -124,6 +132,8 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     public TextView freqLineSlopeText;
     @BindView(R.id.freqline_mse_db)
     public TextView freqLineMsedBText;
+    @BindView(R.id.ed_snr_db)
+    public TextView edSnrdBText;
 
 
     @Override
@@ -218,6 +228,8 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
 
     @Override
     protected void onResume() {
@@ -330,6 +342,9 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         freqLineSlopeText.setText(dataFormat.format(resultPresenter.getFreqLineSlope()));
         // Freq Line MSE
         freqLineMsedBText.setText(dataFormat.format(resultPresenter.getFreqLineMSEdB()) + " dB");
+        // ED SNR dB
+        edSnrdBText.setText(dataFormat.format(resultPresenter.getEdSNRdB()) + " dB");
+
 
 
         long[] totReceivedTimeHistogram = resultPresenter.getTotReceivedTimeHistogram();
@@ -393,7 +408,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                     e.printStackTrace();
                 }
 
-                infoText.setText("CORE VER : " + coreVer + ", MODEL : " + Build.MODEL + ", BUILD DATE : " + buildDateStr);
+                infoText.setText("CORE VER : " + coreVer + ", MODEL : " + Build.MODEL + ",\n" + "BUILD DATE : " + buildDateStr);
 
                 boolean coreInit = intent.getBooleanExtra("extra_core_init", false);
                 double gamma = intent.getDoubleExtra("extra_gamma", 0.0f);
@@ -441,6 +456,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                 double ricianKFactor = intent.getDoubleExtra("extra_riciankfactordB", 0.0);
                 double freqLineSlope = intent.getDoubleExtra("extra_freqlineslope", 0.0);
                 double freqLineMSEdB = intent.getDoubleExtra("extra_freqlinemsedB", 0.0);
+                double edSNRdB = intent.getDoubleExtra("extra_edSNRdB", 0.0);
 
                 Log.i("ACTION_DONE_DECODE D", String.valueOf(procTime));
                 Log.i("ACTION_DONE_DECODE E", String.valueOf(energyDetectTime));
@@ -448,7 +464,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                 resultPresenter.addResultItem(tryCnt, code, procTime,
                         isEnergyDetect, energyDetectTime, detection, decoding, snr, preambleJcsMar,
                         dataJcsParRatioGeqCounter, dataJcsParGeqCounter, preambleCsResult, dataCsResult,
-                        currT, totReceivedTime, spreadingTime, ricianKFactor, freqLineSlope, freqLineMSEdB);
+                        currT, totReceivedTime, spreadingTime, ricianKFactor, freqLineSlope, freqLineMSEdB, edSNRdB);
             }
         }
     };

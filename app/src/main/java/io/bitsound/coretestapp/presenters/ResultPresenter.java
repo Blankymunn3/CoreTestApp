@@ -78,6 +78,7 @@ public class ResultPresenter implements Presenter {
     private double mRicianKFactor;
     private double mFreqLineSlope;
     private double mFreqLineMSEdB;
+    private double mEdSNRdB;
 
     // 응답시간 통계
     private long[] totReceivedTimeHistogram = new long[SDK_RETRY_COUNT];
@@ -405,6 +406,10 @@ public class ResultPresenter implements Presenter {
         return mFreqLineMSEdB;
     }
 
+    public double getEdSNRdB() {
+        return mEdSNRdB;
+    }
+
     public void startSoundllySDK() {
         this.isRunning = true;
         Soundlly.startDetect(false);
@@ -422,7 +427,8 @@ public class ResultPresenter implements Presenter {
     public void addResultItem(int tryCnt, long code, double procTime, boolean isEnergyDetect, long energyDetectTime,
                               boolean detection, boolean decoding, double snr, double preambleJcsMar,
                               int dataJcsParRatioGeqCounter, int dataJcsParGeqCounter, boolean preambleCsResult,
-                              boolean dataCsResult, double currT, long totRecTime, double spreadingTime, double ricianKFactor, double freqLineSlope, double freqLineMSEdB) {
+                              boolean dataCsResult, double currT, long totRecTime, double spreadingTime,
+                              double ricianKFactor, double freqLineSlope, double freqLineMSEdB, double edSNRdB) {
         if (totRecTryCount <= 0 || testCount < totRecTryCount) {
             testCount++;
 
@@ -504,6 +510,7 @@ public class ResultPresenter implements Presenter {
             mRicianKFactor = ricianKFactor;
             mFreqLineSlope = freqLineSlope;
             mFreqLineMSEdB = freqLineMSEdB;
+            mEdSNRdB = edSNRdB;
         }
     }
 
