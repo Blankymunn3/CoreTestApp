@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="frame_types">
+        <item>FrameTypeOne</item>
+        <item>FrameTypeTwo</item>
+        <item>FrameTypeThree</item>
+        <item>FrameTypeFour</item>
+    </string-array>
+
+    <string-array name="core_type_array">
+        <item>FullPkt</item>
+        <item>Parallel</item>
+    </string-array>
+
+</resources>
