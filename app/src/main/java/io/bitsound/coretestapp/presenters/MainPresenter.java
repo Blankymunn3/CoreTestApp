@@ -17,13 +17,14 @@ public class MainPresenter implements Presenter {
     private boolean qokShapingSelected = true;
     private boolean localSyncFinderSelected = true;
 
-    private int frameType;
-    private int coreType;
+    private int frameType = 1;
+    private int coreType = 1;
     private int noSigThreshold;
     private int combiningThreshold;
     private double rec;
     private double gamma;
-    private double unitBufferSize;
+    private int unitBufferSize;
+    private int recCount;
 
     public void setMainView(@NonNull MainView view) {
         this.mainView = view;
@@ -87,15 +88,20 @@ public class MainPresenter implements Presenter {
         this.gamma = gamma;
     }
 
-    public void setUnitBufferSize(double unitBufferSize) {
+
+    public void setUnitBufferSize(int unitBufferSize) {
         this.unitBufferSize = unitBufferSize;
+    }
+
+    public void setRecCount(int recCount) {
+        this.recCount = recCount;
     }
 
 
     public void startPerformanceRecord() {
         mainView.startPerformanceRecResultActivity(preambleCsSelected, energyDetectorSelected,
                 qokShapingSelected, localSyncFinderSelected, frameType, coreType,
-                noSigThreshold, combiningThreshold, rec, gamma, unitBufferSize);
+                noSigThreshold, combiningThreshold, rec, gamma, unitBufferSize, recCount);
     }
 
     @Override

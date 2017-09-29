@@ -24,7 +24,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultView
     private List<ResultModel> resultModelList;
     private Context mContext;
 
-    DecimalFormat dataFormat = new DecimalFormat("#.00");
+    private DecimalFormat dataFormat = new DecimalFormat("#.00");
 
     public ResultAdapter(Context context, List<ResultModel> resultModelList) {
         this.resultModelList = resultModelList;
@@ -43,12 +43,14 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultView
         ResultModel resultModel = resultModelList.get(pos);
 
         resultViewHolder.tryCntView.setText(String.valueOf(resultModel.getTryCnt()));
-        resultViewHolder.isEnergyDetectView.setText(String.valueOf(resultModel.getIsEnergyDetect()));
+        resultViewHolder.decodingResultView.setText(String.valueOf(resultModel.getCode()));
+        resultViewHolder.isEnergyDetectView.setText(String.valueOf(resultModel.isEnergyDetect()));
+        resultViewHolder.preCsMarView.setText(dataFormat.format(resultModel.getPreambleJcsMar()));
+        resultViewHolder.dataCsResultView.setText(String.valueOf(resultModel.isDataCsResult()));
         resultViewHolder.currTView.setText(dataFormat.format(resultModel.getCurrT()) + " dB");
-        resultViewHolder.preambleCsResultView.setText(String.valueOf(resultModel.getPreambleCsResult()));
-        resultViewHolder.preCsMarView.setText(dataFormat.format(resultModel.getPreCsMar()));
-        resultViewHolder.dataCsResultView.setText(String.valueOf(resultModel.getDataCsResult()));
-        resultViewHolder.dataCsParRatioView.setText(dataFormat.format(resultModel.getDataCsParRatio()));
+        resultViewHolder.preCsMarView.setText(dataFormat.format(resultModel.getPreambleJcsMar()));
+        resultViewHolder.dataCsParRatioView.setText(dataFormat.format(resultModel.getDataJcsParRatioGeqCounter())
+                + "(" + dataFormat.format(resultModel.getDataJcsParGeqCounter()) + ")");
     }
 
     @Override
@@ -60,6 +62,8 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultView
 
         @BindView(R.id.try_count_textview)
         public TextView tryCntView;
+        @BindView(R.id.decoding_result_textview)
+        public TextView decodingResultView;
         @BindView(R.id.is_energy_detect_textview)
         public TextView isEnergyDetectView;
         @BindView(R.id.curr_t_textview)
@@ -72,6 +76,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ResultView
         public TextView dataCsResultView;
         @BindView(R.id.data_cs_par_ratio_textview)
         public TextView dataCsParRatioView;
+
 
         public ResultViewHolder(View view) {
             super(view);

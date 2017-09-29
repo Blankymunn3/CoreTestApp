@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
@@ -12,12 +13,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +53,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     public static final String EXTRA_UNIT_BUFFER_SIZE = "extra_unit_buffer_size";
     public static final String EXTRA_REC_COUNT = "extra_rec_count";
 
-    public static final String EXTRA_CORE_VERSION = "extra_core_version";
+    private DecimalFormat dataFormat = new DecimalFormat("#.00");
 
     private ResultPresenter resultPresenter;
     private ResultAdapter resultAdapter;
@@ -71,10 +75,40 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     public TextView preCsMarText;
     @BindView(R.id.data_cs_par_ratio_textview)
     public TextView dataCsParRatioText;
+    @BindView(R.id.gamma_textview)
+    public TextView gammaText;
     @BindView(R.id.recycler_view)
     public RecyclerView recyclerView;
     @BindView(R.id.info_textview)
     public TextView infoText;
+
+    @BindView(R.id.no_energy_textview)
+    public TextView noEnergyText;
+    @BindView(R.id.no_sig_textview)
+    public TextView noSignalText;
+    @BindView(R.id.find_energy_textview)
+    public TextView findEnergyText;
+    @BindView(R.id.good_sig_textview)
+    public TextView goodSignalText;
+    @BindView(R.id.ambig_sig_textview)
+    public TextView ambiSignalText;
+    @BindView(R.id.crc_err_textview)
+    public TextView crcErrText;
+    @BindView(R.id.success_textview)
+    public TextView successText;
+    @BindView(R.id.curr_part_textview)
+    public TextView lastProcTimeText;
+    @BindView(R.id.avg_part_textview)
+    public TextView avgProcTimeText;
+    @BindView(R.id.curr_t_textview)
+    public TextView currTText;
+    @BindView(R.id.avg_t_textview)
+    public TextView avgTText;
+    @BindView(R.id.post_cs_per_textview)
+    public TextView postCsPerText;
+    @BindView(R.id.no_cs_per_textview)
+    public TextView noCsPerText;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,9 +134,6 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         recyclerView.setAdapter(resultAdapter);
         recyclerView.setLayoutManager(layoutManager);
 
-        resultModelList.add(new ResultModel(1, 0, 1.1f, 1, 2.2f, 2, -1.0f));
-        resultModelList.add(new ResultModel(2, 1, 0.9f, 3, 0.2f, 0, 2.0f));
-
         Intent intent = getIntent();
 
         boolean preambleCsSelected = intent.getBooleanExtra(ResultActivity.EXTRA_PREAMBLE_CS,
@@ -125,10 +156,10 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                 resultPresenter.getRec());
         double gamma = intent.getDoubleExtra(ResultActivity.EXTRA_GAMMA,
                 resultPresenter.getGamma());
-        double unitBufferSize = intent.getDoubleExtra(ResultActivity.EXTRA_UNIT_BUFFER_SIZE,
+        int unitBufferSize = intent.getIntExtra(ResultActivity.EXTRA_UNIT_BUFFER_SIZE,
                 resultPresenter.getUnitBufferSize());
         int recCount = intent.getIntExtra(ResultActivity.EXTRA_REC_COUNT,
-                resultPresenter.getRecCount());
+                resultPresenter.getTotRecTryCount());
 
         resultPresenter.setPreambleCsSelected(preambleCsSelected);
         resultPresenter.setEnergyDetectorSelected(energyDetectorSelected);
@@ -141,9 +172,10 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         resultPresenter.setRec(rec);
         resultPresenter.setGamma(gamma);
         resultPresenter.setUnitBufferSize(unitBufferSize);
-        resultPresenter.setRecCount(recCount);
+        resultPresenter.setTotRecTryCount(recCount);
 
         resultPresenter.initSoundllySdk();
+
     }
 
     @Override
@@ -176,7 +208,9 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         this.resultPresenter.resume();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("");
-        intentFilter.addAction("ACTION_CORE_VERSION");
+        intentFilter.addAction("ACTION_CORE_INIT");
+        intentFilter.addAction("ACTION_CORE_PARTIAL_DECODE");
+        intentFilter.addAction("ACTION_CORE_DONE_DECODE");
         LocalBroadcastManager.getInstance(this).registerReceiver(soundllySDKBroadcastReceiver, intentFilter);
     }
 
@@ -195,6 +229,80 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     @Override
     public void refreshRecyclerView() {
         resultAdapter.notifyDataSetChanged();
+        Log.i("TAG", "refreshRecyclerView()");
+    }
+
+    @Override
+    public void showMicPermissionError() {
+        Toast.makeText(ResultActivity.this, getString(R.string.mic_permission_denied), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void refreshData() {
+        // reveived total
+        receivedTotalText.setText(String.valueOf(resultPresenter.getTestCount()));
+        // preamble cs thres
+        preambleCsThresText.setText(String.valueOf(resultPresenter.getPreambleCsThres()));
+        // data cs thres
+        dataCsThresText.setText(resultPresenter.getNoSigThres() + ", " + resultPresenter.getCombiningThres());
+        // recT(avr)
+        recTText.setText("0(0.0) ms");
+        // post rec decT(avr)
+        postRecDecTText.setText("0(0,0) ms");
+        // preCS MAR
+        preCsMarText.setText(String.valueOf(resultPresenter.getAvgPreCsMar()));
+        // gamma
+        gammaText.setText(String.valueOf(resultPresenter.getGamma()));
+        int[] symbolDataCsParRatioHistogram = resultPresenter.getSymbolDataCsParRatioHistogram();
+
+        int[] symbolDataCsParHistogram = resultPresenter.getSymbolDataCsParHistogram();
+
+        int symbolSize = resultPresenter.getSymbolNum() + 1;
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("DataCs ParRatio(Par) : ");
+
+        for (int i = 0; i < symbolSize; i++) {
+            sb.append("[")
+                    .append(i)
+                    .append("]: ")
+                    .append(symbolDataCsParRatioHistogram[i])
+                    .append("(")
+                    .append(symbolDataCsParHistogram[i])
+                    .append("), ");
+        }
+
+        sb.deleteCharAt(sb.length() - 2);
+
+        dataCsParRatioText.setText(sb.toString());
+
+        // no energy
+        noEnergyText.setText(String.valueOf(resultPresenter.getTotNoEnergy()));
+        // find energy
+        findEnergyText.setText(String.valueOf(resultPresenter.getTotFindEnergy()));
+        // no signal
+        noSignalText.setText(String.valueOf(resultPresenter.getTotNoSig()));
+        // good signal
+        goodSignalText.setText(String.valueOf(resultPresenter.getTotGoodSig()));
+        // ambiguous signal
+        ambiSignalText.setText(String.valueOf(resultPresenter.getTotAmbiSig()));
+        // crc error
+        crcErrText.setText(String.valueOf(resultPresenter.getTotCrcErr()));
+        // success
+        successText.setText(String.valueOf(resultPresenter.getTotSuccess()));
+        // curr t
+        currTText.setText(dataFormat.format(resultPresenter.getLastCurrT()) + " dB");
+        // avg t
+        avgTText.setText(dataFormat.format(resultPresenter.getAvgCurrT()) + " dB");
+        // curr par t
+        lastProcTimeText.setText(dataFormat.format(resultPresenter.getLastProcTime()) + " ms");
+        // avg par t
+        avgProcTimeText.setText(dataFormat.format(resultPresenter.getAvgProcTime()) + " ms");
+        // post cs per
+        postCsPerText.setText(dataFormat.format(resultPresenter.getPostCsPer()) + " %");
+        // no cs per
+        noCsPerText.setText(dataFormat.format(resultPresenter.getNoCsPer()) + " %");
     }
 
     private BroadcastReceiver soundllySDKBroadcastReceiver = new BroadcastReceiver() {
@@ -202,9 +310,8 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            if ("ACTION_CORE_VERSION".equals(action)) {
-                double coreVer = intent.getDoubleExtra(EXTRA_CORE_VERSION, -1.0f);
-
+            if ("ACTION_CORE_INIT".equals(action)) {
+                double coreVer = intent.getDoubleExtra("extra_core_version", -1.0f);
                 String buildDateStr = "None";
 
                 try {
@@ -214,11 +321,61 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                     SimpleDateFormat buildDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
                     buildDateStr = buildDate.format(new java.util.Date(time));
 
-                } catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                infoText.setText("CORE VER : " + coreVer + ", BUILD DATE : " + buildDateStr);
+                infoText.setText("CORE VER : " + coreVer + ", MODEL : " + Build.MODEL + ", BUILD DATE : " + buildDateStr);
+
+                boolean coreInit = intent.getBooleanExtra("extra_core_init", false);
+                double gamma = intent.getDoubleExtra("extra_gamma", 0.0f);
+                int symbolNum = intent.getIntExtra("extra_symbol_num", 0);
+                double preambleCsThres = intent.getDoubleExtra("extra_preamble_cs_thres", 0.0f);
+                double noSigThres = intent.getDoubleExtra("extra_no_sig_thres", 0.0f);
+                double combiningThres = intent.getDoubleExtra("extra_combining_thres", 0.0f);
+
+                if (!coreInit) {
+                    Toast.makeText(ResultActivity.this, getString(R.string.failed_core_init), Toast.LENGTH_SHORT).show();
+                } else {
+                    resultPresenter.setSymbolNum(symbolNum);
+                    resultPresenter.setGamma(gamma);
+                    resultPresenter.setPreambleCsThres(preambleCsThres);
+                    resultPresenter.setNoSigThres(noSigThres);
+                    resultPresenter.setCombiningThres(combiningThres);
+
+                    refreshData();
+
+                    resultPresenter.startSoundllySDK();
+
+                }
+            } else if ("ACTION_CORE_PARTIAL_DECODE".equals(action)) {
+                double time = intent.getDoubleExtra("extra_time", 0.0f);
+                Log.i("ACTION_PARTIAL_DECODE", String.valueOf(time));
+                resultPresenter.addProcTime(time);
+            } else if ("ACTION_CORE_DONE_DECODE".equals(action)) {
+                // tryCnt 사용 안함. 숫자가 안 맞아서 따로 계산
+                int tryCnt = intent.getIntExtra("extra_try_cnt", -1);
+                long code = intent.getLongExtra("extra_code", -100);
+                double procTime = intent.getDoubleExtra("extra_time", 0.0f);
+                boolean isEnergyDetect = intent.getBooleanExtra("extra_is_energy_detect", false);
+                long energyDetectTime = intent.getLongExtra("extra_energy_detect_time", 0);
+                boolean detection = intent.getBooleanExtra("extra_detection", false);
+                boolean decoding = intent.getBooleanExtra("extra_decoding", false);
+                double snr = intent.getDoubleExtra("extra_snr", 0.0f);
+                double preambleJcsMar = intent.getDoubleExtra("extra_preamble_jcs_mar", 0.0f);
+                int dataJcsParRatioGeqCounter = intent.getIntExtra("extra_data_jcs_par_ratio_geq_counter", 0);
+                int dataJcsParGeqCounter = intent.getIntExtra("extra_data_jcs_par_geq_counter", 0);
+                boolean preambleCsResult = intent.getBooleanExtra("extra_preamble_cs_result", false);
+                boolean dataCsResult = intent.getBooleanExtra("extra_data_cs_result", false);
+                double currT = intent.getDoubleExtra("extra_curr_t", 0.0f);
+
+                Log.i("ACTION_DONE_DECODE D", String.valueOf(procTime));
+                Log.i("ACTION_DONE_DECODE E", String.valueOf(energyDetectTime));
+
+                resultPresenter.addResultItem(tryCnt, code, procTime,
+                        isEnergyDetect, energyDetectTime, detection, decoding, snr, preambleJcsMar,
+                        dataJcsParRatioGeqCounter, dataJcsParGeqCounter, preambleCsResult, dataCsResult,
+                        currT);
             }
         }
     };

@@ -11,7 +11,6 @@
     <string name="data_cs_button_text">Data CS</string>
     <string name="detect_param_button_text">Detect Param</string>
     <string name="unit_buffer_param_button_text">Unit Buffer Param</string>
-    <string name="no_sig_required_msg">noSigThreshold를 입력하세요</string>
     <string name="combining_required_msg">combiningThreshold를 입력하세요</string>
     <string name="dialog_cs_param_title_text">CS Param 설정</string>
     <string name="cs_param_no_sig_threshold_hint_text">noSigThreshold</string>
@@ -31,7 +30,7 @@
     <string name="data_cs_thres_text">DataCSThres :</string>
     <string name="rec_t_text">RecT(avr.) :</string>
     <string name="post_rec_dec_t_text">PostRec-DecT(avr.) :</string>
-    <string name="pre_cs_mar_text">PreCS MAR :</string>
+    <string name="pre_cs_mar_text">PreCS MAR(avr.) :</string>
     <string name="data_cs_par_ratio_text">DataCS ParRatio(Par) :</string>
     <string name="no_energy_text">NoEnergy :</string>
     <string name="no_sig_text">NoSig :</string>
@@ -54,11 +53,12 @@
     <string name="menu_play">Play</string>
     <string name="menu_pause">Pause</string>
     <string name="menu_reset">Reset</string>
-    <string name="menu_share">Share</string>
     <string name="menu_mic">Request Mic Perm</string>
     <string name="mic_permission_denied">마이크 권한 불허가</string>
     <string name="mic_permission_allowed">마이크 권한 허가</string>
     <string name="dialog_rec_count_title_text">테스트 횟수 입력(0은 중지시까지)</string>
     <string name="rec_count_hint_text">테스트 횟수</string>
     <string name="mic_count_required_msg">시도 횟수를 입력하세요(0은 정지시까지 반복)</string>
+    <string name="failed_core_init">코어 초기화에 실패하였습니다</string>
+    <string name="decoding_result_text">DecodingResult :</string>
 </resources>

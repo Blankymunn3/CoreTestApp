@@ -34,6 +34,20 @@
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/holo_red_light"
                     android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/decoding_result_text"
+                    android:textColor="@android:color/black"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"/>
+
+                <TextView
+                    android:id="@+id/decoding_result_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/black"/>
             </LinearLayout>
 
             <LinearLayout
@@ -51,7 +65,7 @@
                         android:textSize="12sp"
                         android:text="@string/is_energy_detect_text"
                         android:textColor="@android:color/black"
-                        android:layout_marginRight="5dp"/>
+                        android:layout_marginRight="2dp"/>
                     <TextView
                         android:id="@+id/is_energy_detect_textview"
                         android:layout_width="wrap_content"
@@ -69,7 +83,7 @@
                         android:textSize="12sp"
                         android:text="@string/curr_t_text"
                         android:textColor="@android:color/black"
-                        android:layout_marginRight="5dp"/>
+                        android:layout_marginRight="2dp"/>
                     <TextView
                         android:id="@+id/curr_t_textview"
                         android:layout_width="wrap_content"
@@ -94,7 +108,7 @@
                         android:textSize="12sp"
                         android:text="@string/preamble_cs_result_text"
                         android:textColor="@android:color/black"
-                        android:layout_marginRight="5dp"/>
+                        android:layout_marginRight="2dp"/>
                     <TextView
                         android:id="@+id/preamble_cs_result_textview"
                         android:layout_width="wrap_content"
@@ -112,7 +126,7 @@
                         android:textSize="12sp"
                         android:text="@string/pre_cs_mar_text"
                         android:textColor="@android:color/black"
-                        android:layout_marginRight="5dp"/>
+                        android:layout_marginRight="2dp"/>
                     <TextView
                         android:id="@+id/pre_cs_mar_textview"
                         android:layout_width="wrap_content"
@@ -137,7 +151,7 @@
                         android:textSize="12sp"
                         android:text="@string/data_cs_result_text"
                         android:textColor="@android:color/black"
-                        android:layout_marginRight="5dp"/>
+                        android:layout_marginRight="2dp"/>
                     <TextView
                         android:id="@+id/data_cs_result_textview"
                         android:layout_width="wrap_content"
@@ -155,7 +169,7 @@
                         android:textSize="12sp"
                         android:text="@string/data_cs_par_ratio_text"
                         android:textColor="@android:color/black"
-                        android:layout_marginRight="5dp"/>
+                        android:layout_marginRight="2dp"/>
                     <TextView
                         android:id="@+id/data_cs_par_ratio_textview"
                         android:layout_width="wrap_content"

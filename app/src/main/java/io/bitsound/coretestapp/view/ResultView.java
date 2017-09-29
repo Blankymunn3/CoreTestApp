@@ -5,6 +5,7 @@ package io.bitsound.coretestapp.view;
  */
 
 public interface ResultView {
-
-    public void refreshRecyclerView();
+    void refreshRecyclerView();
+    void showMicPermissionError();
+    void refreshData();
 }

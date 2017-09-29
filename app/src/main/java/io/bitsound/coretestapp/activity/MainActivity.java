@@ -161,50 +161,39 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
     @OnClick(R.id.signal_cycle)
     public void onSignalCycleButtonClick() {
-        final View root = getLayoutInflater().inflate(R.layout.dialog_cs_param, null);
-        csParamDialog = new MaterialDialog(this)
+        final View root = getLayoutInflater().inflate(R.layout.dialog_rec_count, null);
+        recCountDialog = new MaterialDialog(this)
                 .setView(root)
                 .setPositiveButton(getString(R.string.dialog_ok_text), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        EditText noSigThresholdEdittext = (EditText) root.findViewById(R.id.no_sig_threshold_edittext);
-                        EditText combiningThresholdEdittext = (EditText) root.findViewById(R.id.combining_threshold_edittext);
+                        EditText recCountEdittext = (EditText) root.findViewById(R.id.rec_count_edittext);
 
-                        String noSigStr = noSigThresholdEdittext.getText().toString();
-                        String combiningStr = combiningThresholdEdittext.getText().toString();
+                        String recCountStr = recCountEdittext.getText().toString();
 
-                        int noSigThreshold;
-                        int combiningThreshold;
+                        int recCount;
 
-                        if (!TextUtils.isEmpty(noSigStr)) {
-                            noSigThreshold = Integer.parseInt(noSigStr);
+                        if (!TextUtils.isEmpty(recCountStr)) {
+                            recCount = Integer.parseInt(recCountStr);
                         } else {
-                            Toast.makeText(MainActivity.this, getString(R.string.no_sig_required_msg),
+                            Toast.makeText(MainActivity.this, getString(R.string.mic_count_required_msg),
                                     Toast.LENGTH_SHORT).show();
                             return;
                         }
 
-                        if (!TextUtils.isEmpty(combiningStr)) {
-                            combiningThreshold = Integer.parseInt(combiningStr);
-                        } else {
-                            Toast.makeText(MainActivity.this, getString(R.string.combining_required_msg),
-                                    Toast.LENGTH_SHORT).show();
-                            return;
-                        }
+                        mainPresenter.setRecCount(recCount);
 
-                        mainPresenter.setCsParam(noSigThreshold, combiningThreshold);
-
-                        csParamDialog.dismiss();
+                        recCountDialog.dismiss();
                     }
                 })
                 .setNegativeButton(getString(R.string.dialog_cancel_text), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        csParamDialog.dismiss();
+                        recCountDialog.dismiss();
                     }
                 });
 
-        csParamDialog.show();
+        recCountDialog.show();
     }
 
     @OnClick(R.id.data_cs_param_button)
@@ -314,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
                         String unitBufferSizeStr = unitBufferSizeEdittext.getText().toString();
 
-                        double unitBufferSize;
+                        int unitBufferSize;
 
                         if (!TextUtils.isEmpty(unitBufferSizeStr)) {
                             unitBufferSize = Integer.parseInt(unitBufferSizeStr);
@@ -416,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     public void startPerformanceRecResultActivity(boolean preambleCsSelected,
                                                   boolean energyDetectorSelected, boolean qokShapingSelected,
                                                   boolean localSyncFinderSelected, int frameType, int coreType, int noSigThreshold,
-                                                  int combiningThreshold, double rec, double gamma, double unitBufferSize, int recCount) {
+                                                  int combiningThreshold, double rec, double gamma, int unitBufferSize, int recCount) {
 
         Intent intent = new Intent(MainActivity.this, ResultActivity.class);
 

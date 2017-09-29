@@ -9,6 +9,5 @@ public interface MainView {
     void startPerformanceRecResultActivity(boolean preambleCsSelected,
                                            boolean energyDetectorSelected, boolean qokShapingSelected,
                                            boolean localSyncFinderSelected, int frameType, int coreType, int noSigThreshold,
-                                           int combiningThreshold, double rec, double gamma, double unitBufferSize, int recCount);
-
+                                           int combiningThreshold, double rec, double gamma, int unitBufferSize, int recCount);
 }
