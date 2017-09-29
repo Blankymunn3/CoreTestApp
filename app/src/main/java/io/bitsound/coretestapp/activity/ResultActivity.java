@@ -116,6 +116,14 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     public TextView postCsPerText;
     @BindView(R.id.no_cs_per_textview)
     public TextView noCsPerText;
+    @BindView(R.id.spreading_time)
+    public TextView spreadingTimeText;
+    @BindView(R.id.riciank_factor)
+    public TextView ricianKFactorText;
+    @BindView(R.id.freqline_slope)
+    public TextView freqLineSlopeText;
+    @BindView(R.id.freqline_mse_db)
+    public TextView freqLineMsedBText;
 
 
     @Override
@@ -314,6 +322,15 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         postCsPerText.setText(dataFormat.format(resultPresenter.getPostCsPer()) + " %");
         // no cs per
         noCsPerText.setText(dataFormat.format(resultPresenter.getNoCsPer()) + " %");
+        // Spreading Time
+        spreadingTimeText.setText(dataFormat.format(resultPresenter.getSpreadingTime()) + " s");
+        // Rician K Factor
+        ricianKFactorText.setText(dataFormat.format(resultPresenter.getRicianKFactor()) + " dB");
+        // Freq Line Slope
+        freqLineSlopeText.setText(dataFormat.format(resultPresenter.getFreqLineSlope()));
+        // Freq Line MSE
+        freqLineMsedBText.setText(dataFormat.format(resultPresenter.getFreqLineMSEdB()) + " dB");
+
 
         long[] totReceivedTimeHistogram = resultPresenter.getTotReceivedTimeHistogram();
         int[] tryCountHistogram = resultPresenter.getTryCountHistogram();
@@ -420,7 +437,10 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                 boolean dataCsResult = intent.getBooleanExtra("extra_data_cs_result", false);
                 double currT = intent.getDoubleExtra("extra_curr_t", 0.0f);
                 long totReceivedTime = intent.getLongExtra("extra_tot_received_time", -1);
-
+                double spreadingTime = intent.getDoubleExtra("extra_spreading_time", 0.0);
+                double ricianKFactor = intent.getDoubleExtra("extra_riciankfactordB", 0.0);
+                double freqLineSlope = intent.getDoubleExtra("extra_freqlineslope", 0.0);
+                double freqLineMSEdB = intent.getDoubleExtra("extra_freqlinemsedB", 0.0);
 
                 Log.i("ACTION_DONE_DECODE D", String.valueOf(procTime));
                 Log.i("ACTION_DONE_DECODE E", String.valueOf(energyDetectTime));
@@ -428,7 +448,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                 resultPresenter.addResultItem(tryCnt, code, procTime,
                         isEnergyDetect, energyDetectTime, detection, decoding, snr, preambleJcsMar,
                         dataJcsParRatioGeqCounter, dataJcsParGeqCounter, preambleCsResult, dataCsResult,
-                        currT, totReceivedTime);
+                        currT, totReceivedTime, spreadingTime, ricianKFactor, freqLineSlope, freqLineMSEdB);
             }
         }
     };

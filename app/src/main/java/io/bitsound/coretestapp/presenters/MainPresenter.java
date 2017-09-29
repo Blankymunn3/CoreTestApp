@@ -17,7 +17,16 @@ public class MainPresenter implements Presenter {
     private boolean qokShapingSelected = true;
     private boolean localSyncFinderSelected = true;
 
+    /**
+     * 프레임 타입.
+     * 0 : qok22(legacy) FrameTypeZero
+     * 1 : qok32(tv long) FrameTypeOne
+     * 2 : qok10(tv short) FrameTypeTwo
+     * 3 : qok32(d2d)      FrameTypeThee
+     * 4 : qok22(tv robust) FrameTypeFour
+     */
     private int frameType = 1;
+
     private int coreType = 1;
     private int noSigThreshold;
     private int combiningThreshold;

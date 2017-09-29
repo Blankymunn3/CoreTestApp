@@ -24,6 +24,6 @@
         android:id="@+id/gamma_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="numberSigned"
+        android:inputType="numberDecimal|numberSigned"
         android:hint="@string/gamma_hint_text"/>
 </LinearLayout>

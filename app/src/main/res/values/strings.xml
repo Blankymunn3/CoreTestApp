@@ -49,6 +49,10 @@
     <string name="post_cs_per_text">Post-CS PER :</string>
     <string name="avg_part_text">Avg. ParT :</string>
     <string name="no_cs_per_text">No-CS PER :</string>
+    <string name="spreading_time">Spreading Time :</string>
+    <string name="riciank_factor">RicianK Factor :</string>
+    <string name="freqline_slope">FreqLine Slope :</string>
+    <string name="freqline_mse_db">FreqLine MSE :</string>
     <string name="try_count_text">tryCnt:</string>
     <string name="is_energy_detect_text">isEnergyDetect :</string>
     <string name="preamble_cs_result_text">PreambleCSresult :</string>

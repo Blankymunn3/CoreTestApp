@@ -74,6 +74,10 @@ public class ResultPresenter implements Presenter {
     private int totSuccess;
     private double totCurrT;
     private double lastCurrT;
+    private double mSpreadingTime;
+    private double mRicianKFactor;
+    private double mFreqLineSlope;
+    private double mFreqLineMSEdB;
 
     // 응답시간 통계
     private long[] totReceivedTimeHistogram = new long[SDK_RETRY_COUNT];
@@ -385,6 +389,22 @@ public class ResultPresenter implements Presenter {
         return tryCountHistogram;
     }
 
+    public double getSpreadingTime() {
+        return mSpreadingTime;
+    }
+
+    public double getRicianKFactor() {
+        return mRicianKFactor;
+    }
+
+    public double getFreqLineSlope() {
+        return mFreqLineSlope;
+    }
+
+    public double getFreqLineMSEdB() {
+        return mFreqLineMSEdB;
+    }
+
     public void startSoundllySDK() {
         this.isRunning = true;
         Soundlly.startDetect(false);
@@ -402,7 +422,7 @@ public class ResultPresenter implements Presenter {
     public void addResultItem(int tryCnt, long code, double procTime, boolean isEnergyDetect, long energyDetectTime,
                               boolean detection, boolean decoding, double snr, double preambleJcsMar,
                               int dataJcsParRatioGeqCounter, int dataJcsParGeqCounter, boolean preambleCsResult,
-                              boolean dataCsResult, double currT, long totRecTime) {
+                              boolean dataCsResult, double currT, long totRecTime, double spreadingTime, double ricianKFactor, double freqLineSlope, double freqLineMSEdB) {
         if (totRecTryCount <= 0 || testCount < totRecTryCount) {
             testCount++;
 
@@ -478,6 +498,12 @@ public class ResultPresenter implements Presenter {
                 task.execute();
             }
             lastProcTime = 0;
+
+
+            mSpreadingTime = spreadingTime;
+            mRicianKFactor = ricianKFactor;
+            mFreqLineSlope = freqLineSlope;
+            mFreqLineMSEdB = freqLineMSEdB;
         }
     }
 
