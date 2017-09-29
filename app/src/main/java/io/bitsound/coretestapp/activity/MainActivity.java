@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -67,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         ButterKnife.bind(this);
 
@@ -325,8 +327,9 @@ public class MainActivity extends AppCompatActivity implements MainView {
                     }
                 });
 
-        unitBufferSizeDialog.dismiss();
+        unitBufferSizeDialog.show();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

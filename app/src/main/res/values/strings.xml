@@ -42,6 +42,8 @@
     <string name="avg_t_text">Avg. T(y) :</string>
     <string name="crc_err_text">CRC Err :</string>
     <string name="gamma_text">Gamma :</string>
+    <string name="avg_tot_decoding_time_text">avg TotDecodingTime :</string>
+    <string name="avg_tot_decoding_time_histogram_text">avg TotDecodingTimeHistogram :</string>
     <string name="success_text">Success :</string>
     <string name="curr_part_text">Curr. ParT :</string>
     <string name="post_cs_per_text">Post-CS PER :</string>

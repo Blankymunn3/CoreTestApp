@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,6 +79,10 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     public TextView dataCsParRatioText;
     @BindView(R.id.gamma_textview)
     public TextView gammaText;
+    @BindView(R.id.avg_tot_decoding_time_textview)
+    public TextView avgTotDecodingTimeText;
+    @BindView(R.id.avg_tot_decoding_time_histogram_textview)
+    public TextView avgTotDecodingTimeHistogramText;
     @BindView(R.id.recycler_view)
     public RecyclerView recyclerView;
     @BindView(R.id.info_textview)
@@ -116,6 +122,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         ButterKnife.bind(this);
         resultPresenter = new ResultPresenter();
         resultPresenter.setResultView(this);
@@ -198,8 +205,6 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                 return true;
             case R.id.menu_stop:
                 resultPresenter.stopSoundllySdk();
-                return true;
-            case R.id.menu_reset:
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -309,6 +314,35 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         postCsPerText.setText(dataFormat.format(resultPresenter.getPostCsPer()) + " %");
         // no cs per
         noCsPerText.setText(dataFormat.format(resultPresenter.getNoCsPer()) + " %");
+
+        if (resultPresenter.getTotTryCount() == 0) {
+            avgTotDecodingTimeText.setText("0");
+        } else {
+            double totRecTime = (double) resultPresenter.getTotReceivedTime() / (double) resultPresenter.getTotTryCount();
+            avgTotDecodingTimeText.setText(dataFormat.format(totRecTime));
+        }
+
+        long[] totReceivedTimeHistogram = resultPresenter.getTotReceivedTimeHistogram();
+        int[] tryCountHistogram = resultPresenter.getTryCountHistogram();
+
+        sb = new StringBuilder();
+
+        sb.append("avg TotDecodingTimeHistogram : ");
+
+        for (int i = 0; i < totReceivedTimeHistogram.length; i++) {
+            if (tryCountHistogram[i] == 0) {
+                sb.append("0, ");
+            } else {
+                double recTime = (double) totReceivedTimeHistogram[i] / (double) tryCountHistogram[i];
+                sb.append(dataFormat.format(recTime))
+                        .append(", ");
+            }
+        }
+
+        sb.deleteCharAt(sb.length() - 2);
+
+        avgTotDecodingTimeHistogramText.setText(sb.toString());
+
     }
 
     private BroadcastReceiver soundllySDKBroadcastReceiver = new BroadcastReceiver() {
@@ -374,6 +408,8 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                 boolean preambleCsResult = intent.getBooleanExtra("extra_preamble_cs_result", false);
                 boolean dataCsResult = intent.getBooleanExtra("extra_data_cs_result", false);
                 double currT = intent.getDoubleExtra("extra_curr_t", 0.0f);
+                long totReceivedTime = intent.getLongExtra("extra_tot_received_time", -1);
+
 
                 Log.i("ACTION_DONE_DECODE D", String.valueOf(procTime));
                 Log.i("ACTION_DONE_DECODE E", String.valueOf(energyDetectTime));
@@ -381,7 +417,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                 resultPresenter.addResultItem(tryCnt, code, procTime,
                         isEnergyDetect, energyDetectTime, detection, decoding, snr, preambleJcsMar,
                         dataJcsParRatioGeqCounter, dataJcsParGeqCounter, preambleCsResult, dataCsResult,
-                        currT);
+                        currT, totReceivedTime);
             }
         }
     };

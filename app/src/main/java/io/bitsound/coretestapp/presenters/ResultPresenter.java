@@ -27,8 +27,8 @@ import io.bitsound.coretestapp.view.ResultView;
 public class ResultPresenter implements Presenter {
     private static final String TAG = ResultPresenter.class.getSimpleName();
     private static final String SOUNDLLY_APP_KEY = "54bda562-0a9205df-da905901-YDAJ1861";
-
     private static final int ARCHIVE_COUNT = 5;
+    private static final int SDK_RETRY_COUNT = 4;
 
     private Archive corePerfTestArchive;
 
@@ -75,15 +75,16 @@ public class ResultPresenter implements Presenter {
     private double totCurrT;
     private double lastCurrT;
 
+    // 응답시간 통계
+    private long[] totReceivedTimeHistogram = new long[SDK_RETRY_COUNT];
+    private int[] tryCountHistogram = new int[SDK_RETRY_COUNT];
+
+    private long totReceivedTime;
+    private int totTryCount;
+
     private volatile boolean isRunning;
 
     public ResultPresenter() {
-        try {
-            corePerfTestArchive = new FileArchive();
-        } catch (IOException e) {
-            e.printStackTrace();
-            corePerfTestArchive = null;
-        }
     }
 
     public void setContext(@NonNull Context context) {
@@ -302,6 +303,13 @@ public class ResultPresenter implements Presenter {
         this.symbolNum = symbolNum;
         this.symbolDataCsParRatioHistogram = new int[symbolNum + 1];
         this.symbolDataCsParHistogram = new int[symbolNum + 1];
+
+        try {
+            corePerfTestArchive = new FileArchive(symbolNum + 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+            corePerfTestArchive = null;
+        }
     }
 
     public int getSymbolNum() {
@@ -372,6 +380,22 @@ public class ResultPresenter implements Presenter {
         }
     }
 
+    public long[] getTotReceivedTimeHistogram() {
+        return totReceivedTimeHistogram;
+    }
+
+    public int[] getTryCountHistogram() {
+        return tryCountHistogram;
+    }
+
+    public long getTotReceivedTime() {
+        return totReceivedTime;
+    }
+
+    public int getTotTryCount() {
+        return totTryCount;
+    }
+
     public void startSoundllySDK() {
         this.isRunning = true;
         Soundlly.startDetect(false);
@@ -389,7 +413,7 @@ public class ResultPresenter implements Presenter {
     public void addResultItem(int tryCnt, long code, double procTime, boolean isEnergyDetect, long energyDetectTime,
                               boolean detection, boolean decoding, double snr, double preambleJcsMar,
                               int dataJcsParRatioGeqCounter, int dataJcsParGeqCounter, boolean preambleCsResult,
-                              boolean dataCsResult, double currT) {
+                              boolean dataCsResult, double currT, long totRecTime) {
         if (totRecTryCount <= 0 || testCount < totRecTryCount) {
             testCount++;
 
@@ -398,10 +422,6 @@ public class ResultPresenter implements Presenter {
                     dataJcsParGeqCounter, preambleCsResult, dataCsResult, currT);
             resultModelList.add(model);
 
-            // data cs par ratio
-            symbolDataCsParRatioHistogram[dataJcsParRatioGeqCounter] += 1;
-            // data cs par
-            symbolDataCsParHistogram[dataJcsParGeqCounter] += 1;
 
             lastCurrT = currT;
             totCurrT += currT;
@@ -411,6 +431,19 @@ public class ResultPresenter implements Presenter {
             // 마지막 디코딩 시간
             lastProcTime += procTime;
 
+            if (code >= 0 && totRecTime > 0) {
+                // tryCnt는 0,1,2,3 이렇게 옴
+                // startListening 에서 디코딩 끝난 시간까지 통계
+                totReceivedTime += totRecTime;
+                // 총 시도 횟수 누적
+                totTryCount += (tryCnt + 1);
+
+                // 해당 재시작 횟수에 디코딩 시간 누적
+                totReceivedTimeHistogram[tryCnt] += totRecTime;
+                // 해당 재시작 횟수 누적
+                tryCountHistogram[tryCnt]++;
+            }
+            
             // 에너지 유무
             if (isEnergyDetect) {
                 totFindEnergy++;
@@ -418,28 +451,34 @@ public class ResultPresenter implements Presenter {
                 // 신호 유무
                 if (preambleCsResult) {
                     totFindSig++;
-                } else {
+                    // data cs par ratio
+                    symbolDataCsParRatioHistogram[dataJcsParRatioGeqCounter] += 1;
+                    // data cs par
+                    symbolDataCsParHistogram[dataJcsParGeqCounter] += 1;
+
+                    // good sig
+                    if (dataCsResult) {
+                        totGoodSig++;
+
+                        // crc error -> code == -3
+                        if (code == -3) {
+                            totCrcErr++;
+                        }
+
+                        // success -> code >= 0
+                        if (code >= 0) {
+                            totSuccess++;
+                        }
+                    } else {
+                        totAmbiSig++;
+                    }
+                }
+                else {
                     totNoSig++;
                 }
 
-                // good sig
-                if (dataCsResult) {
-                    totGoodSig++;
-                } else {
-                    totAmbiSig++;
-                }
             } else {
                 totNoEnergy++;
-            }
-
-            // crc error -> code == -3
-            if (code == -3) {
-                totCrcErr++;
-            }
-
-            // success -> code >= 0
-            if (code >= 0) {
-                totSuccess++;
             }
 
             resultView.refreshRecyclerView();
@@ -450,7 +489,7 @@ public class ResultPresenter implements Presenter {
                         preambleCsThres, noSigThres, combiningThres, getAvgPreCsMar(), gamma,
                         symbolDataCsParRatioHistogram, symbolDataCsParHistogram, totNoEnergy,
                         totFindEnergy, totProcTime, lastProcTime, totNoSig, totFindSig, totGoodSig,
-                        totAmbiSig, totCrcErr, totSuccess, totCurrT, lastCurrT);
+                        totAmbiSig, totCrcErr, totSuccess, getAvgCurrT(), lastCurrT);
                 task.execute();
             }
             lastProcTime = 0;
@@ -471,6 +510,11 @@ public class ResultPresenter implements Presenter {
     public void destroy() {
         Soundlly.release();
     }
+
+    public String getArchiveFilePath() {
+        return ((FileArchive)corePerfTestArchive).getArchiveFilePath();
+    }
+
     private static class FileArchiveTask extends AsyncTask<Void, Void, Void> {
 
         private Archive archive;
@@ -492,14 +536,14 @@ public class ResultPresenter implements Presenter {
         private final int totAmbiSig;
         private final int totCrcErr;
         private final int totSuccess;
-        private final double totCurrT;
+        private final double avgCurrT;
         private final double lastCurrT;
 
         public FileArchiveTask(Archive archive, int totReceived, double preambleCsThres, double noSigThres,
                                double combiningThres, double avgPreCsMar, double gamma, int[] symbolDataCsParRatioHistogram,
                                int[] symbolDataCsParHistogram, int totNoEnergy, int totFindEnergy, double totProcTime,
                                double lastProcTime, int totNoSig, int totFindSig, int totGoodSig, int totAmbiSig,
-                               int totCrcErr, int totSuccess, double totCurrT, double lastCurrT) {
+                               int totCrcErr, int totSuccess, double avgCurrT, double lastCurrT) {
             this.archive = archive;
             this.totReceived = totReceived;
             this.preambleCsThres = preambleCsThres;
@@ -519,7 +563,7 @@ public class ResultPresenter implements Presenter {
             this.totAmbiSig = totAmbiSig;
             this.totCrcErr = totCrcErr;
             this.totSuccess = totSuccess;
-            this.totCurrT = totCurrT;
+            this.avgCurrT = avgCurrT;
             this.lastCurrT = lastCurrT;
         }
 
@@ -532,7 +576,7 @@ public class ResultPresenter implements Presenter {
                             combiningThres, avgPreCsMar, gamma, symbolDataCsParRatioHistogram,
                             symbolDataCsParHistogram, totNoEnergy, totFindEnergy, totProcTime,
                             lastProcTime, totNoSig, totFindSig, totGoodSig, totAmbiSig,
-                            totCrcErr, totSuccess, totCurrT, lastCurrT);
+                            totCrcErr, totSuccess, avgCurrT, lastCurrT);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

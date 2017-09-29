@@ -145,7 +145,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/data_cs_par_ratio_text"
-            android:textColor="@android:color/black"/>
+            android:textColor="@android:color/black"
+            android:textSize="12sp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -154,19 +155,47 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/gamma_text"
+                android:textSize="12sp"
                 android:textColor="@android:color/black"
                 android:layout_marginRight="5dp"/>
             <TextView
                 android:id="@+id/gamma_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="12sp"
                 android:textColor="@android:color/black"/>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/avg_tot_decoding_time_text"
+                android:textSize="12sp"
+                android:textColor="@android:color/black"
+                android:layout_marginRight="5dp"/>
+            <TextView
+                android:id="@+id/avg_tot_decoding_time_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textColor="@android:color/black"/>
+        </LinearLayout>
+        <TextView
+            android:id="@+id/avg_tot_decoding_time_histogram_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/avg_tot_decoding_time_histogram_text"
+            android:textSize="12sp"
+            android:textColor="@android:color/black"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@drawable/textline2">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

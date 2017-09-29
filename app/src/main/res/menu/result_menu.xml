@@ -11,9 +11,4 @@
         android:icon="@drawable/ic_stop_white_48dp"
         android:title="@string/menu_pause"
         app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/menu_reset"
-        android:icon="@drawable/ic_autorenew_white_48dp"
-        app:showAsAction="ifRoom"
-        android:title="@string/menu_reset" />
 </menu>
