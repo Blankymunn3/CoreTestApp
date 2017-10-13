@@ -1,6 +1,5 @@
 package io.bitsound.coretestapp.activity;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,7 +17,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +27,6 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,6 +40,7 @@ import io.bitsound.coretestapp.adepters.ResultAdapter;
 import io.bitsound.coretestapp.models.ResultModel;
 import io.bitsound.coretestapp.presenters.ResultPresenter;
 import io.bitsound.coretestapp.view.ResultView;
+import me.drakeet.materialdialog.MaterialDialog;
 
 /**
  * Created by soundlly on 2017. 9. 28..
@@ -68,6 +66,8 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     private ResultPresenter resultPresenter;
     private ResultAdapter resultAdapter;
     private List<ResultModel> resultModelList;
+
+    private MaterialDialog captureDialog;
 
     @BindView(R.id.toolbar)
     public Toolbar toolbar;
@@ -214,9 +214,31 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                supportFinishAfterTransition();
+       switch (item.getItemId()) {
+                    case android.R.id.home:
+                        resultPresenter.stopSoundllySdk();
+                        final View root = getLayoutInflater().inflate(R.layout.dialog_capture, null);
+                        captureDialog = new MaterialDialog(this)
+                                .setView(root)
+                                .setPositiveButton(getString(R.string.dialog_ok_text), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                View rootView = getWindow().getDecorView();
+                                File screenShot = ScreenShot(rootView);
+                                if(screenShot!=null){
+                                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.fromFile(screenShot)));
+                                }
+                                supportFinishAfterTransition();
+                            }
+                        })
+                        .setNegativeButton(getString(R.string.dialog_cancel_text), new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                resultPresenter.startSoundllySDK();
+                                captureDialog.dismiss();
+                            }
+                        });
+                captureDialog.show();
                 return true;
             case R.id.menu_play:
                 resultPresenter.startSoundllySDK();
@@ -229,7 +251,32 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         }
     }
 
+    public File ScreenShot(View view){
 
+        String filename = new SimpleDateFormat("yyMMdd_HH:mm:ss").format(new Date(System.currentTimeMillis())) +".png";
+        view.setDrawingCacheEnabled(true);
+        Bitmap screenBitmap = view.getDrawingCache();
+
+        String dirPath = Environment.getExternalStorageDirectory() + "/corePerfTest";
+        File dir = new File(dirPath);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        File file = new File(Environment.getExternalStorageDirectory()+"/corePerfTest", filename);
+        FileOutputStream os = null;
+        try{
+            os = new FileOutputStream(file);
+            screenBitmap.compress(Bitmap.CompressFormat.PNG, 90, os);
+            os.close();
+        }catch (IOException e){
+            Log.e("Error",e.toString());
+            return null;
+        }
+
+        view.setDrawingCacheEnabled(false);
+        return file;
+    }
 
     @Override
     protected void onResume() {
@@ -241,6 +288,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         intentFilter.addAction("ACTION_CORE_PARTIAL_DECODE");
         intentFilter.addAction("ACTION_CORE_DONE_DECODE");
         LocalBroadcastManager.getInstance(this).registerReceiver(soundllySDKBroadcastReceiver, intentFilter);
+        Log.i("onResume() : ", "SUCCESS");
     }
 
     @Override
@@ -391,6 +439,8 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     private BroadcastReceiver soundllySDKBroadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            Log.i("onReceive : ", "SUCCESS");
+
             String action = intent.getAction();
 
             if ("ACTION_CORE_INIT".equals(action)) {

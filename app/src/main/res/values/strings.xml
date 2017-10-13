@@ -71,5 +71,5 @@
     <string name="decoding_result_text">DecodingResult :</string>
     <string name="write_external_storage_permission_denied">파일 쓰기 권한 불허가</string>
     <string name="write_external_storage_permission_allowed">파일 쓰기 권한 허가</string>
-    <string name="dialog_capture_text">현재 내을 저장하겠습니까 ?</string>
+    <string name="dialog_capture_text">현재 내용을 저장하겠습니까 ?</string>
 </resources>

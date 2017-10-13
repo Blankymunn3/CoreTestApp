@@ -2,22 +2,22 @@ package io.bitsound.coretestapp.presenters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-import com.soundlly.standalone.sdk.Soundlly;
-import com.soundlly.standalone.sdk.SoundllyResult;
-import com.soundlly.standalone.sdk.SoundllyResultListener;
+//import com.soundlly.standalone.sdk.Soundlly;
+//import com.soundlly.standalone.sdk.SoundllyResult;
+//import com.soundlly.standalone.sdk.SoundllyResultListener;
 
-import java.io.IOException;
+import io.bitsound.receiver.Bitsound;
+import io.bitsound.receiver.BitsoundContents;
+import io.bitsound.receiver.BitsoundContentsListener;
+
 import java.util.List;
 
 import io.bitsound.coretestapp.activity.ResultActivity;
 import io.bitsound.coretestapp.models.ResultModel;
-import io.bitsound.coretestapp.persistent.Archive;
-import io.bitsound.coretestapp.persistent.FileArchive;
 import io.bitsound.coretestapp.view.ResultView;
 
 /**
@@ -26,11 +26,8 @@ import io.bitsound.coretestapp.view.ResultView;
 
 public class ResultPresenter implements Presenter {
     private static final String TAG = ResultPresenter.class.getSimpleName();
-    private static final String SOUNDLLY_APP_KEY = "54bda562-0a9205df-da905901-YDAJ1861";
-    private static final int ARCHIVE_COUNT = 5;
+    //private static final String SOUNDLLY_APP_KEY = "54bda562-0a9205df-da905901-YDAJ1861";
     private static final int SDK_RETRY_COUNT = 4;
-
-    private Archive corePerfTestArchive;
 
     private Context context;
     private ResultView resultView;
@@ -49,6 +46,7 @@ public class ResultPresenter implements Presenter {
     private double rec;
     private double gamma;
     private int unitBufferSize;
+
     /** 총 테스트 진행할 횟수, 0이면 중지할때까지 **/
     private int totRecTryCount;
     private int symbolNum;
@@ -102,35 +100,37 @@ public class ResultPresenter implements Presenter {
     }
 
     public void initSoundllySdk() {
-        int ret = Soundlly.init(context, SOUNDLLY_APP_KEY, new SoundllyResultListener() {
+        int ret = Bitsound.init(context, new BitsoundContentsListener() {
 
             @Override
             public void onInitialized() {
+                Log.i("onInitialized","SUCCESS");
             }
 
             @Override
             public void onError(int i) {
+                Log.e("onError",Integer.toString(i));
             }
 
             @Override
             public void onStateChanged(int i) {
-                if (i == SoundllyResultListener.STOPPED) {
+                if (i == BitsoundContents.State.STOPPED) {
                     if (isRunning && (totRecTryCount <= 0 || testCount < totRecTryCount)) {
-                        Soundlly.startDetect(false);
+                        Bitsound.startDetection(false);
                     }
                 }
             }
 
             @Override
-            public void onResult(int i, SoundllyResult soundllyResult) {
-
+            public void onResult(int i, BitsoundContents bitsoundContents) {
+                Log.i("onResult","SUCCESS");
             }
         });
 
-        if (ret != Soundlly.SUCCESS) {
-            if (ret == Soundlly.INVALID_ARGUMENTS) {
+        if (ret != Bitsound.Result.SUCCESS) {
+            if (ret == Bitsound.Result.INVALID_ARGUMENTS) {
                 Log.e(TAG, "Soundlly init error : appkey is null");
-            } else if (ret == Soundlly.MIC_PERMISSION_DENIED) {
+            } else if (ret == Bitsound.Result.MIC_PERMISSION_DENIED) {
                 Log.e(TAG, "Soundlly init error : mic permission denied");
                 resultView.showMicPermissionError();
             }
@@ -149,6 +149,7 @@ public class ResultPresenter implements Presenter {
             intent.putExtra(ResultActivity.EXTRA_GAMMA, gamma);
             intent.putExtra(ResultActivity.EXTRA_UNIT_BUFFER_SIZE, unitBufferSize);
 
+            Log.d("Bitsound Result : ","true");
             LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
         }
     }
@@ -305,13 +306,6 @@ public class ResultPresenter implements Presenter {
         this.symbolNum = symbolNum;
         this.symbolDataCsParRatioHistogram = new int[symbolNum + 1];
         this.symbolDataCsParHistogram = new int[symbolNum + 1];
-
-        try {
-            corePerfTestArchive = new FileArchive(symbolNum + 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-            corePerfTestArchive = null;
-        }
     }
 
     public int getSymbolNum() {
@@ -412,7 +406,7 @@ public class ResultPresenter implements Presenter {
 
     public void startSoundllySDK() {
         this.isRunning = true;
-        Soundlly.startDetect(false);
+        Bitsound.startDetection(false);
     }
 
     public void stopSoundllySdk() {
@@ -495,14 +489,6 @@ public class ResultPresenter implements Presenter {
             resultView.refreshRecyclerView();
             resultView.refreshData();
 
-            if (testCount % ARCHIVE_COUNT == 0) {
-                FileArchiveTask task = new FileArchiveTask(corePerfTestArchive, testCount,
-                        preambleCsThres, noSigThres, combiningThres, getAvgPreCsMar(), gamma,
-                        symbolDataCsParRatioHistogram, symbolDataCsParHistogram, totNoEnergy,
-                        totFindEnergy, totProcTime, lastProcTime, totNoSig, totFindSig, totGoodSig,
-                        totAmbiSig, totCrcErr, totSuccess, getAvgCurrT(), lastCurrT);
-                task.execute();
-            }
             lastProcTime = 0;
 
 
@@ -521,86 +507,12 @@ public class ResultPresenter implements Presenter {
 
     @Override
     public void pause() {
-        Soundlly.stopDetect();
+        Bitsound.stopDetection();
     }
 
     @Override
     public void destroy() {
-        Soundlly.release();
-    }
-
-    public String getArchiveFilePath() {
-        return ((FileArchive)corePerfTestArchive).getArchiveFilePath();
-    }
-
-    private static class FileArchiveTask extends AsyncTask<Void, Void, Void> {
-
-        private Archive archive;
-        private final int totReceived;
-        private final double preambleCsThres;
-        private final double noSigThres;
-        private final double combiningThres;
-        private final double avgPreCsMar;
-        private final double gamma;
-        private final int[] symbolDataCsParRatioHistogram;
-        private final int[] symbolDataCsParHistogram;
-        private final int totNoEnergy;
-        private final int totFindEnergy;
-        private final double totProcTime;
-        private final double lastProcTime;
-        private final int totNoSig;
-        private final int totFindSig;
-        private final int totGoodSig;
-        private final int totAmbiSig;
-        private final int totCrcErr;
-        private final int totSuccess;
-        private final double avgCurrT;
-        private final double lastCurrT;
-
-        public FileArchiveTask(Archive archive, int totReceived, double preambleCsThres, double noSigThres,
-                               double combiningThres, double avgPreCsMar, double gamma, int[] symbolDataCsParRatioHistogram,
-                               int[] symbolDataCsParHistogram, int totNoEnergy, int totFindEnergy, double totProcTime,
-                               double lastProcTime, int totNoSig, int totFindSig, int totGoodSig, int totAmbiSig,
-                               int totCrcErr, int totSuccess, double avgCurrT, double lastCurrT) {
-            this.archive = archive;
-            this.totReceived = totReceived;
-            this.preambleCsThres = preambleCsThres;
-            this.noSigThres = noSigThres;
-            this.combiningThres = combiningThres;
-            this.avgPreCsMar = avgPreCsMar;
-            this.gamma = gamma;
-            this.symbolDataCsParRatioHistogram = symbolDataCsParRatioHistogram;
-            this.symbolDataCsParHistogram = symbolDataCsParHistogram;
-            this.totNoEnergy = totNoEnergy;
-            this.totFindEnergy = totFindEnergy;
-            this.totProcTime = totProcTime;
-            this.lastProcTime = lastProcTime;
-            this.totNoSig = totNoSig;
-            this.totFindSig = totFindSig;
-            this.totGoodSig = totGoodSig;
-            this.totAmbiSig = totAmbiSig;
-            this.totCrcErr = totCrcErr;
-            this.totSuccess = totSuccess;
-            this.avgCurrT = avgCurrT;
-            this.lastCurrT = lastCurrT;
-        }
-
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            if (archive != null) {
-                try {
-                    archive.saveCoreStatistics(totReceived, preambleCsThres, noSigThres,
-                            combiningThres, avgPreCsMar, gamma, symbolDataCsParRatioHistogram,
-                            symbolDataCsParHistogram, totNoEnergy, totFindEnergy, totProcTime,
-                            lastProcTime, totNoSig, totFindSig, totGoodSig, totAmbiSig,
-                            totCrcErr, totSuccess, avgCurrT, lastCurrT);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            return null;
-        }
+        Bitsound.release();
     }
 }
+

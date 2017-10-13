@@ -4,7 +4,6 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,6 +13,7 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme"
         android:screenOrientation="portrait">
+
         <activity android:name=".activity.MainActivity"
             android:theme="@style/AppTheme.NoActionBar"> >
             <intent-filter>
@@ -22,8 +22,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".activity.ResultActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+
+        <!-- Bitsound APP KEY -->
+        <meta-data
+            android:name="io.bitsound.AppKey"
+            android:value="75d97ae5-0e2d-4322-82cd-9770d129cd04" />
     </application>
 
 </manifest>

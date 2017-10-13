@@ -19,12 +19,12 @@ public class MainPresenter implements Presenter {
 
     /**
      * 프레임 타입.
-     * 0 : qok22(legacy) FrameTypeZero
-     * 1 : qok32(tv long) FrameTypeOne
-     * 2 : qok10(tv short) FrameTypeTwo
-     * 3 : qok32(d2d)      FrameTypeThee
-     * 4 : qok22(tv robust) FrameTypeFour
+     * 0 : QOK22 FrameTypeOne
+     * 1 : QOK32(TV) FrameTypeTwo
+     * 2 : QOK32(Cinema) FrameTypeThee
+     * 3 : QOK32(D2D) FrameTypeFour
      */
+
     private int frameType = 1;
 
     private int coreType = 1;
