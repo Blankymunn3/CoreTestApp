@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="frame_types">
+        <item>FrameTypeZero</item>
         <item>FrameTypeOne</item>
         <item>FrameTypeTwo</item>
         <item>FrameTypeThree</item>

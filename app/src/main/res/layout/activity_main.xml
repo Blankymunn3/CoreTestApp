@@ -43,15 +43,11 @@
                     android:text="@string/main_preamble_cs_param"
                     android:textSize="18sp" />
 
-                <com.zcw.togglebutton.ToggleButton
+                <Switch
                     android:id="@+id/toggle_preamble_cs"
                     android:layout_width="54dp"
                     android:layout_height="30dp"
-                    app:tbBorderWidth="1dp"
-                    app:tbOffBorderColor="#dbdadb"
-                    app:tbOffColor="#dbdadb"
-                    app:tbOnColor="#68e99f"
-                    app:tbSpotColor="#ffdddd" />
+                    android:checked="true"/>
             </LinearLayout>
 
 
@@ -73,15 +69,11 @@
                     android:text="@string/main_parameter_energy_detector_text"
                     android:textSize="18sp" />
 
-                <com.zcw.togglebutton.ToggleButton
+                <Switch
                     android:id="@+id/toggle_energy_detector"
                     android:layout_width="54dp"
                     android:layout_height="30dp"
-                    app:tbBorderWidth="1dp"
-                    app:tbOffBorderColor="#dbdadb"
-                    app:tbOffColor="#dbdadb"
-                    app:tbOnColor="#68e99f"
-                    app:tbSpotColor="#ffdddd" />
+                    android:checked="true"/>
             </LinearLayout>
 
             <LinearLayout
@@ -102,15 +94,11 @@
                     android:text="@string/main_parameter_qok_shaping_text"
                     android:textSize="18sp" />
 
-                <com.zcw.togglebutton.ToggleButton
+                <Switch
                     android:id="@+id/toggle_qok_shaping"
                     android:layout_width="54dp"
                     android:layout_height="30dp"
-                    app:tbBorderWidth="1dp"
-                    app:tbOffBorderColor="#dbdadb"
-                    app:tbOffColor="#dbdadb"
-                    app:tbOnColor="#68e99f"
-                    app:tbSpotColor="#ffdddd" />
+                    android:checked="true" />
             </LinearLayout>
 
             <LinearLayout
@@ -131,15 +119,11 @@
                     android:text="@string/main_parameter_local_sync_finder_text"
                     android:textSize="18sp" />
 
-                <com.zcw.togglebutton.ToggleButton
+                <Switch
                     android:id="@+id/toggle_local_sync_finder"
                     android:layout_width="54dp"
                     android:layout_height="30dp"
-                    app:tbBorderWidth="1dp"
-                    app:tbOffBorderColor="#dbdadb"
-                    app:tbOffColor="#dbdadb"
-                    app:tbOnColor="#68e99f"
-                    app:tbSpotColor="#ffdddd" />
+                    android:checked="true" />
             </LinearLayout>
 
             <LinearLayout

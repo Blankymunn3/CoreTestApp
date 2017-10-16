@@ -6,13 +6,13 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
-//import com.soundlly.standalone.sdk.Soundlly;
-//import com.soundlly.standalone.sdk.SoundllyResult;
-//import com.soundlly.standalone.sdk.SoundllyResultListener;
+import com.soundlly.standalone.sdk.Soundlly;
+import com.soundlly.standalone.sdk.SoundllyResult;
+import com.soundlly.standalone.sdk.SoundllyResultListener;
 
-import io.bitsound.receiver.Bitsound;
-import io.bitsound.receiver.BitsoundContents;
-import io.bitsound.receiver.BitsoundContentsListener;
+//import io.bitsound.receiver.Bitsound;
+//import io.bitsound.receiver.BitsoundContents;
+//import io.bitsound.receiver.BitsoundContentsListener;
 
 import java.util.List;
 
@@ -26,7 +26,7 @@ import io.bitsound.coretestapp.view.ResultView;
 
 public class ResultPresenter implements Presenter {
     private static final String TAG = ResultPresenter.class.getSimpleName();
-    //private static final String SOUNDLLY_APP_KEY = "54bda562-0a9205df-da905901-YDAJ1861";
+    private static final String SOUNDLLY_APP_KEY = "54bda562-0a9205df-da905901-YDAJ1861";
     private static final int SDK_RETRY_COUNT = 4;
 
     private Context context;
@@ -84,6 +84,33 @@ public class ResultPresenter implements Presenter {
 
     private volatile boolean isRunning;
 
+    @NonNull private SoundllyResultListener msoudnllyResultListener = new SoundllyResultListener() {
+
+        @Override
+        public void onInitialized() {
+            Log.i("onInitialized","SUCCESS");
+        }
+
+        @Override
+        public void onError(int i) {
+            Log.e("onError",Integer.toString(i));
+        }
+
+        @Override
+        public void onStateChanged(int i) {
+            if (i == SoundllyResultListener.STOPPED) {
+                if (isRunning && (totRecTryCount <= 0 || testCount < totRecTryCount)) {
+                    Soundlly.startDetect(false);
+                }
+            }
+        }
+
+        @Override
+        public void onResult(int i, @NonNull SoundllyResult soundllyResult) {
+            Log.i("onResult","SUCCESS");
+        }
+    };
+
     public ResultPresenter() {
     }
 
@@ -95,42 +122,17 @@ public class ResultPresenter implements Presenter {
         this.resultView = view;
     }
 
-    public void setResultModelList(List<ResultModel> resultModelList) {
+    public void setResultModelList(@NonNull List<ResultModel> resultModelList) {
         this.resultModelList = resultModelList;
     }
 
     public void initSoundllySdk() {
-        int ret = Bitsound.init(context, new BitsoundContentsListener() {
+        int ret = Soundlly.init(context, SOUNDLLY_APP_KEY, msoudnllyResultListener);
 
-            @Override
-            public void onInitialized() {
-                Log.i("onInitialized","SUCCESS");
-            }
-
-            @Override
-            public void onError(int i) {
-                Log.e("onError",Integer.toString(i));
-            }
-
-            @Override
-            public void onStateChanged(int i) {
-                if (i == BitsoundContents.State.STOPPED) {
-                    if (isRunning && (totRecTryCount <= 0 || testCount < totRecTryCount)) {
-                        Bitsound.startDetection(false);
-                    }
-                }
-            }
-
-            @Override
-            public void onResult(int i, BitsoundContents bitsoundContents) {
-                Log.i("onResult","SUCCESS");
-            }
-        });
-
-        if (ret != Bitsound.Result.SUCCESS) {
-            if (ret == Bitsound.Result.INVALID_ARGUMENTS) {
+        if (ret != Soundlly.SUCCESS) {
+            if (ret == Soundlly.INVALID_ARGUMENTS) {
                 Log.e(TAG, "Soundlly init error : appkey is null");
-            } else if (ret == Bitsound.Result.MIC_PERMISSION_DENIED) {
+            } else if (ret == Soundlly.MIC_PERMISSION_DENIED) {
                 Log.e(TAG, "Soundlly init error : mic permission denied");
                 resultView.showMicPermissionError();
             }
@@ -166,7 +168,7 @@ public class ResultPresenter implements Presenter {
         return energyDetectorSelected;
     }
 
-    public void setEnergyDetectorSelected(boolean energyDetectorSelected) {
+    public void setEnergyDetectorSelected(@NonNull boolean energyDetectorSelected) {
         this.energyDetectorSelected = energyDetectorSelected;
     }
 
@@ -174,7 +176,7 @@ public class ResultPresenter implements Presenter {
         return qokShapingSelected;
     }
 
-    public void setQokShapingSelected(boolean qokShapingSelected) {
+    public void setQokShapingSelected(@NonNull boolean qokShapingSelected) {
         this.qokShapingSelected = qokShapingSelected;
     }
 
@@ -182,7 +184,7 @@ public class ResultPresenter implements Presenter {
         return localSyncFinderSelected;
     }
 
-    public void setLocalSyncFinderSelected(boolean localSyncFinderSelected) {
+    public void setLocalSyncFinderSelected(@NonNull boolean localSyncFinderSelected) {
         this.localSyncFinderSelected = localSyncFinderSelected;
     }
 
@@ -190,7 +192,7 @@ public class ResultPresenter implements Presenter {
         return frameType;
     }
 
-    public void setFrameType(int frameType) {
+    public void setFrameType(@NonNull int frameType) {
         this.frameType = frameType;
     }
 
@@ -198,7 +200,7 @@ public class ResultPresenter implements Presenter {
         return coreType;
     }
 
-    public void setCoreType(int coreType) {
+    public void setCoreType(@NonNull int coreType) {
         this.coreType = coreType;
     }
 
@@ -206,7 +208,7 @@ public class ResultPresenter implements Presenter {
         return noSigThreshold;
     }
 
-    public void setNoSigThreshold(int noSigThreshold) {
+    public void setNoSigThreshold(@NonNull int noSigThreshold) {
         this.noSigThreshold = noSigThreshold;
     }
 
@@ -214,7 +216,7 @@ public class ResultPresenter implements Presenter {
         return combiningThreshold;
     }
 
-    public void setCombiningThreshold(int combiningThreshold) {
+    public void setCombiningThreshold(@NonNull int combiningThreshold) {
         this.combiningThreshold = combiningThreshold;
     }
 
@@ -222,7 +224,7 @@ public class ResultPresenter implements Presenter {
         return rec;
     }
 
-    public void setRec(double rec) {
+    public void setRec(@NonNull double rec) {
         this.rec = rec;
     }
 
@@ -230,7 +232,7 @@ public class ResultPresenter implements Presenter {
         return gamma;
     }
 
-    public void setGamma(double gamma) {
+    public void setGamma(@NonNull double gamma) {
         this.gamma = gamma;
     }
 
@@ -286,7 +288,7 @@ public class ResultPresenter implements Presenter {
         return unitBufferSize;
     }
 
-    public void setUnitBufferSize(int unitBufferSize) {
+    public void setUnitBufferSize(@NonNull int unitBufferSize) {
         this.unitBufferSize = unitBufferSize;
     }
 
@@ -294,7 +296,7 @@ public class ResultPresenter implements Presenter {
         return totRecTryCount;
     }
 
-    public void setTotRecTryCount(int totRecTryCount) {
+    public void setTotRecTryCount(@NonNull int totRecTryCount) {
         this.totRecTryCount = totRecTryCount;
 
     }
@@ -302,7 +304,7 @@ public class ResultPresenter implements Presenter {
         return testCount;
     }
 
-    public void setSymbolNum(int symbolNum) {
+    public void setSymbolNum(@NonNull int symbolNum) {
         this.symbolNum = symbolNum;
         this.symbolDataCsParRatioHistogram = new int[symbolNum + 1];
         this.symbolDataCsParHistogram = new int[symbolNum + 1];
@@ -316,7 +318,7 @@ public class ResultPresenter implements Presenter {
         return symbolDataCsParRatioHistogram;
     }
 
-    public void setSymbolDataCsParRatioHistogram(int[] symbolDataCsParRatioHistogram) {
+    public void setSymbolDataCsParRatioHistogram(@NonNull int[] symbolDataCsParRatioHistogram) {
         this.symbolDataCsParRatioHistogram = symbolDataCsParRatioHistogram;
     }
 
@@ -324,11 +326,11 @@ public class ResultPresenter implements Presenter {
         return symbolDataCsParHistogram;
     }
 
-    public void setSymbolDataCsParHistogram(int[] symbolDataCsParHistogram) {
+    public void setSymbolDataCsParHistogram(@NonNull int[] symbolDataCsParHistogram) {
         this.symbolDataCsParHistogram = symbolDataCsParHistogram;
     }
 
-    public void setPreambleCsThres(double preambleCsThres) {
+    public void setPreambleCsThres(@NonNull double preambleCsThres) {
         this.preambleCsThres = preambleCsThres;
     }
 
@@ -340,7 +342,7 @@ public class ResultPresenter implements Presenter {
         return combiningThres;
     }
 
-    public void setCombiningThres(double combiningThres) {
+    public void setCombiningThres(@NonNull double combiningThres) {
         this.combiningThres = combiningThres;
     }
 
@@ -348,7 +350,7 @@ public class ResultPresenter implements Presenter {
         return noSigThres;
     }
 
-    public void setNoSigThres(double noSigThres) {
+    public void setNoSigThres(@NonNull double noSigThres) {
         this.noSigThres = noSigThres;
     }
 
@@ -406,23 +408,24 @@ public class ResultPresenter implements Presenter {
 
     public void startSoundllySDK() {
         this.isRunning = true;
-        Bitsound.startDetection(false);
+        Soundlly.startDetect(false);
     }
 
     public void stopSoundllySdk() {
         this.isRunning = false;
     }
 
-    public void addProcTime(double procTime) {
+    public void addProcTime(@NonNull double procTime) {
         totProcTime += procTime;
         lastProcTime += procTime;
     }
 
-    public void addResultItem(int tryCnt, long code, double procTime, boolean isEnergyDetect, long energyDetectTime,
-                              boolean detection, boolean decoding, double snr, double preambleJcsMar,
-                              int dataJcsParRatioGeqCounter, int dataJcsParGeqCounter, boolean preambleCsResult,
-                              boolean dataCsResult, double currT, long totRecTime, double spreadingTime,
-                              double ricianKFactor, double freqLineSlope, double freqLineMSEdB, double edSNRdB) {
+    public void addResultItem(@NonNull int tryCnt, @NonNull long code, @NonNull double procTime, @NonNull boolean isEnergyDetect,
+                              @NonNull long energyDetectTime, @NonNull boolean detection, @NonNull boolean decoding, @NonNull double snr,
+                              @NonNull double preambleJcsMar, @NonNull int dataJcsParRatioGeqCounter, @NonNull int dataJcsParGeqCounter,
+                              @NonNull boolean preambleCsResult, @NonNull boolean dataCsResult, @NonNull double currT, @NonNull long totRecTime,
+                              @NonNull double spreadingTime, @NonNull double ricianKFactor, @NonNull double freqLineSlope,
+                              @NonNull double freqLineMSEdB, @NonNull double edSNRdB) {
         if (totRecTryCount <= 0 || testCount < totRecTryCount) {
             testCount++;
 
@@ -507,12 +510,13 @@ public class ResultPresenter implements Presenter {
 
     @Override
     public void pause() {
-        Bitsound.stopDetection();
+        Soundlly.stopDetect();
     }
 
     @Override
     public void destroy() {
-        Bitsound.release();
+        Soundlly.release();
+        System.exit (0);
     }
 }
 

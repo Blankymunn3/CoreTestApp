@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.soundlly.standalone.sdk.Soundlly;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -141,7 +144,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        ButterKnife.bind(this);
+        ButterKnife.bind(ResultActivity.this);
         resultPresenter = new ResultPresenter();
         resultPresenter.setResultView(this);
         resultPresenter.setContext(this);
@@ -215,12 +218,12 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle presses on the action bar items
        switch (item.getItemId()) {
-                    case android.R.id.home:
-                        resultPresenter.stopSoundllySdk();
-                        final View root = getLayoutInflater().inflate(R.layout.dialog_capture, null);
-                        captureDialog = new MaterialDialog(this)
-                                .setView(root)
-                                .setPositiveButton(getString(R.string.dialog_ok_text), new View.OnClickListener() {
+           case android.R.id.home:
+               resultPresenter.stopSoundllySdk();
+               final View root = getLayoutInflater().inflate(R.layout.dialog_capture, null);
+               captureDialog = new MaterialDialog(this)
+                       .setView(root)
+                       .setPositiveButton(getString(R.string.dialog_ok_text), new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
                                 View rootView = getWindow().getDecorView();
@@ -438,7 +441,8 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
 
     private BroadcastReceiver soundllySDKBroadcastReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive(@NonNull Context context, @NonNull Intent intent) {
+
             Log.i("onReceive : ", "SUCCESS");
 
             String action = intent.getAction();
@@ -515,6 +519,7 @@ public class ResultActivity extends AppCompatActivity implements ResultView {
                         isEnergyDetect, energyDetectTime, detection, decoding, snr, preambleJcsMar,
                         dataJcsParRatioGeqCounter, dataJcsParGeqCounter, preambleCsResult, dataCsResult,
                         currT, totReceivedTime, spreadingTime, ricianKFactor, freqLineSlope, freqLineMSEdB, edSNRdB);
+
             }
         }
     };

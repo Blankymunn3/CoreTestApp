@@ -10,15 +10,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.jaredrummler.materialspinner.MaterialSpinner;
-import com.zcw.togglebutton.ToggleButton;
 
 import org.honorato.multistatetogglebutton.MultiStateToggleButton;
 
@@ -43,13 +41,13 @@ public class MainActivity extends AppCompatActivity implements MainView {
     @BindView(R.id.toolbar)
     public Toolbar toolbar;
     @BindView(R.id.toggle_preamble_cs)
-    public ToggleButton preambleCsToggleButton;
+    public Switch preambleCsToggleButton;
     @BindView(R.id.toggle_energy_detector)
-    public ToggleButton energyDetectorToggleButton;
+    public Switch energyDetectorToggleButton;
     @BindView(R.id.toggle_qok_shaping)
-    public ToggleButton qokShapingToggleButton;
+    public Switch qokShapingToggleButton;
     @BindView(R.id.toggle_local_sync_finder)
-    public ToggleButton localSyncFinderToggleButton;
+    public Switch localSyncFinderToggleButton;
     @BindView(R.id.frame_type_spinner)
     public MaterialSpinner frameTypeSpinner;
     @BindView(R.id.core_type_toggle)
@@ -72,6 +70,8 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
         ButterKnife.bind(this);
 
+        checkPermission();
+
         this.mainPresenter = new MainPresenter();
         this.mainPresenter.setMainView(this);
 
@@ -79,56 +79,28 @@ public class MainActivity extends AppCompatActivity implements MainView {
         setSupportActionBar(toolbar);
 
         if (mainPresenter.isPreambleCsSelected()) {
-            preambleCsToggleButton.toggleOn();
+            preambleCsToggleButton.setChecked(true);
         } else {
-            preambleCsToggleButton.toggleOff();
+            preambleCsToggleButton.setChecked(false);
         }
 
         if (mainPresenter.isEnergyDetectorSelected()) {
-            energyDetectorToggleButton.toggleOn();
+            energyDetectorToggleButton.setChecked(true);
         } else {
-            energyDetectorToggleButton.toggleOff();
+            energyDetectorToggleButton.setChecked(false);
         }
 
         if (mainPresenter.isQokShapingSelected()) {
-            qokShapingToggleButton.toggleOn();
+            qokShapingToggleButton.setChecked(true);
         } else {
-            qokShapingToggleButton.toggleOff();
+            qokShapingToggleButton.setChecked(false);
         }
 
         if (mainPresenter.isLocalSyncFinderSelected()) {
-            localSyncFinderToggleButton.toggleOn();
+            localSyncFinderToggleButton.setChecked(true);
         } else {
-            localSyncFinderToggleButton.toggleOff();
+            localSyncFinderToggleButton.setChecked(false);
         }
-
-        preambleCsToggleButton.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
-            @Override
-            public void onToggle(boolean on) {
-                mainPresenter.setPreambleCsSelected(on);
-            }
-        });
-
-        energyDetectorToggleButton.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
-            @Override
-            public void onToggle(boolean on) {
-                mainPresenter.setEnergyDetectorSelected(on);
-            }
-        });
-
-        qokShapingToggleButton.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
-            @Override
-            public void onToggle(boolean on) {
-                mainPresenter.setQokShapingSelected(on);
-            }
-        });
-
-        localSyncFinderToggleButton.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
-            @Override
-            public void onToggle(boolean on) {
-                mainPresenter.setLocalSyncFinderSelected(on);
-            }
-        });
 
         frameTypeSpinner.setItems(frameTypeString);
 
@@ -161,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements MainView {
         mainPresenter.startPerformanceRecord();
     }
 
+
     @OnClick(R.id.signal_cycle)
     public void onSignalCycleButtonClick() {
         final View root = getLayoutInflater().inflate(R.layout.dialog_rec_count, null);
@@ -184,7 +157,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
                         }
 
                         mainPresenter.setRecCount(recCount);
-
                         recCountDialog.dismiss();
                     }
                 })
@@ -328,25 +300,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 });
 
         unitBufferSizeDialog.show();
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle presses on the action bar items
-        switch (item.getItemId()) {
-            case R.id.menu_mic:
-                checkPermission();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
     }
 
     @Override
